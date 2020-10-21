@@ -7,7 +7,7 @@ Features include:
     Release info (c.info)
     Random release info (c.random)
     Mashup tracklist generation (c.generate)
-    (WIP) Roulette game
 
 
 Developed by https://github.com/glae-millen and https://github.com/joe-ldp
+
