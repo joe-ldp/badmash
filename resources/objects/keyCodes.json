@@ -1,0 +1,61 @@
+[
+    { "keyID": "1",  "major": "C maj",    "minor": "A min"  },
+    { "keyID": "1",  "major": "Cmaj",     "minor": "Amin"  },
+    { "keyID": "1",  "major": "C major",  "minor": "A minor"  },
+    { "keyID": "1",  "major": "Cmajor",   "minor": "Aminor"  },
+    
+    { "keyID": "2",  "major": "C# maj",   "minor": "A# min" },
+    { "keyID": "2",  "major": "C#maj",    "minor": "A#min" },
+    { "keyID": "2",  "major": "C# major", "minor": "A# minor" },
+    { "keyID": "2",  "major": "C#major",  "minor": "A#minor" },
+    
+    { "keyID": "3",  "major": "D maj",    "minor": "B min"  },
+    { "keyID": "3",  "major": "Dmaj",     "minor": "Bmin"  },
+    { "keyID": "3",  "major": "D major",  "minor": "B minor"  },
+    { "keyID": "3",  "major": "Dmajor",   "minor": "Bminor"  },   
+    
+    { "keyID": "4",  "major": "D# maj",   "minor": "C min"  },
+    { "keyID": "4",  "major": "D#maj",    "minor": "Cmin"  },
+    { "keyID": "4",  "major": "D# major", "minor": "C minor"  },
+    { "keyID": "4",  "major": "D#major",  "minor": "Cminor"  },
+    
+    { "keyID": "5",  "major": "E maj",    "minor": "C# min" },
+    { "keyID": "5",  "major": "Emaj",     "minor": "C#min" },
+    { "keyID": "5",  "major": "E major",  "minor": "C# minor" },
+    { "keyID": "5",  "major": "Emajor",   "minor": "C#minor" },
+    
+    { "keyID": "6",  "major": "F maj",    "minor": "D min"  },
+    { "keyID": "6",  "major": "Fmaj",     "minor": "Dmin"  },
+    { "keyID": "6",  "major": "F major",  "minor": "D minor"  },
+    { "keyID": "6",  "major": "Fmajor",   "minor": "Dminor"  },
+
+    { "keyID": "7",  "major": "F# maj",   "minor": "D# min" },
+    { "keyID": "7",  "major": "F#maj",    "minor": "D#min" },
+    { "keyID": "7",  "major": "F# major", "minor": "D# minor" },
+    { "keyID": "7",  "major": "F#major",  "minor": "D#minor" },
+    
+    { "keyID": "8",  "major": "G maj",    "minor": "E min"  },
+    { "keyID": "8",  "major": "Gmaj",     "minor": "Emin"  },
+    { "keyID": "8",  "major": "G major",  "minor": "E minor"  },
+    { "keyID": "8",  "major": "Gmajor",   "minor": "Eminor"  },
+    
+    { "keyID": "9",  "major": "G# maj",   "minor": "F min"  },
+    { "keyID": "9",  "major": "G#maj",    "minor": "Fmin"  },
+    { "keyID": "9",  "major": "G# major", "minor": "F minor"  },
+    { "keyID": "9",  "major": "G#major",  "minor": "Fminor"  },
+
+    { "keyID": "10", "major": "A maj",    "minor": "F# min" },
+    { "keyID": "10", "major": "Amaj",     "minor": "F#min" },
+    { "keyID": "10", "major": "A major",  "minor": "F# minor" },
+    { "keyID": "10", "major": "Amajor",   "minor": "F#minor" },
+
+    { "keyID": "11", "major": "A# maj",   "minor": "G min"  },
+    { "keyID": "11", "major": "A#maj",    "minor": "Gmin"  },
+    { "keyID": "11", "major": "A# major", "minor": "G minor"  },
+    { "keyID": "11", "major": "A#major",  "minor": "Gminor"  },
+
+    { "keyID": "12", "major": "B maj",    "minor": "G# min" },
+    { "keyID": "12", "major": "Bmaj",     "minor": "G#min" },
+    { "keyID": "12", "major": "B major",  "minor": "G# minor" },
+    { "keyID": "12", "major": "Bmajor",   "minor": "G#minor" }
+]
