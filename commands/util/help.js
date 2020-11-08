@@ -31,7 +31,7 @@ module.exports = class extends Command
             hanabi = this.client.users.cache.get(process.env.OWNER_ID).tag,
             ravalle = this.client.users.cache.get(process.env.CO_ID).tag,
 
-            prefix = this.client.config.prefix,
+            prefix = this.process.env.prefix,
             embed = new MessageEmbed(),
             
             { commands } = this.client.registry;
@@ -48,7 +48,7 @@ module.exports = class extends Command
             // Master embed content
             embed
                 .setColor(`${color}`)
-                .setTitle(`MCatalog Bot v${this.client.config.version}`)
+                .setTitle(`MCatalog Bot v${process.env.VERSION}`)
                 .setThumbnail(`${botAvatar}`)
                 .setFooter(`Brought to you by ${hanabi} and ${ravalle}.`)
                 .setDescription(`Badmash: A Discord bot that fetches data from\nhttps://rebrand.ly/mcatalog\n\n**Prefix: ${prefix}**`)

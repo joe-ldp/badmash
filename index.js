@@ -10,7 +10,6 @@ const fs = require('fs');
 
 const handler = require("./resources/modules/handler.js");
 
-const config = require("./resources/keys/config.json");
 const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
@@ -20,7 +19,7 @@ const genrePrefixes = require('./resources/objects/genrePrefixes.json');
 // Initialize the Commando client
 const client = new CommandoClient(
 {  
-	commandPrefix: config.prefix,
+	commandPrefix: process.env.PREFIX,
 	owner: [process.env.OWNER_ID, process.env.CO_ID],
   disableEveryone: true,
 });
@@ -34,13 +33,12 @@ client.fs = fs;
 
 client.handler = handler;
 
-client.config = config;
 client.colors = colors;
 client.keyCodes = keyCodes;
 client.genrePrefixes = genrePrefixes;
 
 // Initialize Google Sheets API
-const doc = new client.gs(client.config.sheetKey);
+const doc = new client.gs(process.env.SHEET_KEY);
 client.doc = doc;
 
 // Initialize events
