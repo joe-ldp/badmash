@@ -13,6 +13,9 @@ const handler = require("./resources/modules/handler.js");
 const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
+var google = require('./resources/keys/google.json');
+google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID;
+google.private_key = process.env.GOOGLE_PRIVATE_KEY;
 
 // const client = new Discord.Client();
 
@@ -28,6 +31,7 @@ const client = new CommandoClient(
 client.Discord = Discord;
 
 client.gs = GoogleSpreadsheet;
+client.google = google;
 client.fetch = fetch;
 client.fs = fs;
 
