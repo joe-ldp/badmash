@@ -70,7 +70,7 @@ module.exports = class extends Command
     const keyCodes = this.client.keyCodes;
 
     // Create a connection between the bot and the Google sheet
-    await doc.useServiceAccountAuth(require("../../resources/keys/google.json"));
+    await doc.useServiceAccountAuth(client.google);
     await doc.loadInfo();
 
     // Automatically find the Catalog sheet. Yay!

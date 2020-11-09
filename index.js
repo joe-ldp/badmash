@@ -14,8 +14,8 @@ const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
 var google = require('./resources/keys/google.json');
-google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID.replace(/\\n/g, "\n");
-google.private_key = process.env.GOOGLE_PRIVATE_KEY;
+google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID;
+google.private_key = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
 
 // const client = new Discord.Client();

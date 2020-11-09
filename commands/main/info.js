@@ -39,7 +39,7 @@ module.exports = class extends Command
 
     // Create a connection between the bot and the Google sheet
     const doc = this.client.doc;
-    await doc.useServiceAccountAuth(require("../../resources/keys/google.json"));
+    await doc.useServiceAccountAuth(client.google);
     await doc.loadInfo();
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
