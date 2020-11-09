@@ -36,7 +36,7 @@ module.exports = class extends Command
 
     // Create a connection between the bot and the Google sheet
     const doc = this.client.doc;
-    await doc.useServiceAccountAuth(client.google);
+    await doc.useServiceAccountAuth(this.client.google);
     await doc.loadInfo();
 
     var track, embed;
