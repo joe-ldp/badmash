@@ -60,9 +60,9 @@ module.exports = class extends Command
         } 
         while 
         (
-            track.Genre == "album" ||
-            track.Genre == "ep" ||
-            track.Genre == "compilation"
+            track.Label == "album" ||
+            track.Label == "ep" ||
+            track.Label == "compilation"
         );
 
         embed = await this.client.handler.format(this.client, track);

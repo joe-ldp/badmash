@@ -6,7 +6,7 @@ exports.format = async (client, row) =>
   
   // Initialize variables
   var colors = client.colors,
-      genre = row.Genre,
+      genre = row.Label,
       color = 'b9b9b9';
 
   // Cycle through the colors in colors.json to find a match, bot uses default color if there is no match
@@ -83,7 +83,7 @@ exports.format = async (client, row) =>
     .setDescription(`by **${row.Artists}**\n${embedDesc}`)  
     .setURL(`https://monstercat.com/release/${row.ID}`)
     
-    .addField(`**Genre:**`,            `${row.Genre}`)
+    .addField(`**Genre:**`,            `${row.Label}`)
     
     .addField(`**Catalog:**`,          `${row.ID}`, true)
     .addField(`**Date:**`,             `${row.Date}`, true)

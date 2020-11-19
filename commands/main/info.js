@@ -89,9 +89,9 @@ module.exports = class extends Command
           ).toLowerCase();
 
         // EPs, albums, and compilations have a lower weight in terms of search accessibility
-        if (theRow.Genre.toLowerCase() == "ep" ||
-            theRow.Genre.toLowerCase() == "album" ||
-            theRow.Genre.toLowerCase() == "compilation")
+        if (theRow.Label.toLowerCase() == "ep" ||
+            theRow.Label.toLowerCase() == "album" ||
+            theRow.Label.toLowerCase() == "compilation")
         {
           weight = 0.4;
         }

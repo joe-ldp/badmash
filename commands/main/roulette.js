@@ -103,7 +103,7 @@ module.exports = class extends Command
             do
             {
                 track = rows[Math.floor(Math.random() * rows.length)];
-                genre = track.Genre.toLowerCase();
+                genre = track.Label.toLowerCase();
             } 
             while 
             (

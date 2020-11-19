@@ -100,7 +100,7 @@ module.exports = class extends Command
       // Sum keys and bpms for averaging
       tracks.forEach(track =>
       {
-        //message.say(`${track.Genre}, ${track.Key}, ${track.BPM}`);
+        //message.say(`${track.Label}, ${track.Key}, ${track.BPM}`);
         totBPM += parseInt(track.BPM);
         totKey += getKeyID(track.Key);
       });
@@ -129,10 +129,10 @@ module.exports = class extends Command
       }
       else
       {
-        color = getGenreColor(tracks[0].Genre, colors);
+        color = getGenreColor(tracks[0].Label, colors);
         for (let i = 1; i < tracks.length; i++)
         {
-          color = blendColors(color, getGenreColor(tracks[i].Genre, colors));
+          color = blendColors(color, getGenreColor(tracks[i].Label, colors));
         }
       }
 
@@ -143,8 +143,8 @@ module.exports = class extends Command
 
       if (mashupGenre == "*")
       {
-        const first = tracks[Math.floor(Math.random() * tracks.length)].Genre;
-        const second = tracks[Math.floor(Math.random() * tracks.length)].Genre;
+        const first = tracks[Math.floor(Math.random() * tracks.length)].Label;
+        const second = tracks[Math.floor(Math.random() * tracks.length)].Label;
 
         let prefixes = this.client.genrePrefixes;
         mashupGenre = prefixes[Math.floor(Math.random() * prefixes.length)];
@@ -232,7 +232,7 @@ module.exports = class extends Command
     function validTrack(track, desiredBPM, desiredGenre, desiredKey)
     {
       if (
-        validGenre(track.Genre, desiredGenre) &&
+        validGenre(track.Label, desiredGenre) &&
         validKey(track.Key, desiredKey) &&
         validBPM(track.BPM, desiredBPM)
       )
