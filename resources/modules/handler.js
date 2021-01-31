@@ -12,7 +12,7 @@ exports.format = async (client, row) =>
   // Cycle through the colors in colors.json to find a match, bot uses default color if there is no match
   try 
   { 
-    color = colors.find(obj => obj.genre == genre).color;
+    color = colors.find(obj => obj.genre.toLowerCase() == genre.toLowerCase()).color;
   } catch (err) { /* Do nothing */ }
   
   // Initialize and build the embed description
