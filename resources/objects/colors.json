@@ -30,5 +30,6 @@
   { "genre": "Miscellaneous", "color": "b9b9b9" },
   { "genre": "Album",         "color": "b9b9b9" },
   { "genre": "?",             "color": "b9b9b9" },
-  { "genre": "-",             "color": "b9b9b9" }
+  { "genre": "-",             "color": "b9b9b9" },
+  { "genre": "Hardstyle",     "color": "009600" }
 ]
