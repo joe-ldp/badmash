@@ -49,7 +49,7 @@ module.exports = class extends Command
         return message.reply("You entered nothing.");
 
       // --DEBUG-- Log user input
-      // console.log("Lookup initiated: ", args);
+      console.log("Lookup initiated: ", args);
 
       // Reinitialize inputs as lowercase
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
@@ -99,7 +99,7 @@ module.exports = class extends Command
               rowMatches += weight;
             }
             // --DEBUG-- Log results
-            //console.log(`input "${args[i]}" found in row ${x}: ${rowStr}`);
+            console.log(`input "${args[i]}" found in row ${x}: ${rowStr}`);
           }
           else continue;
         }
@@ -114,7 +114,7 @@ module.exports = class extends Command
         var index = 0;
 
         // --DEBUG-- Weight checking p.1
-        // debug = `Initial selection: ${rows[index].Track}`;
+        //debug = `Initial selection: ${rows[index].Track}`;
 
         // Use latest entry
         for (var i = 0; i < matchCounter.length; i++)
@@ -122,18 +122,18 @@ module.exports = class extends Command
           if (matchCounter[i].matches > matchCounter[index].matches)
           {
             // --DEBUG-- Weight checking p.2
-            // debug += `\nRelease ${rows[i].Artists} - ${rows[i].Track} has a greater weight than ${rows[i].Artists} - ${rows[index].Track}, switching selection`;
+            //debug += `\nRelease ${rows[i].Artists} - ${rows[i].Track} has a greater weight than ${rows[i].Artists} - ${rows[index].Track}, switching selection`;
             index = i;
           }
         }
         // --DEBUG-- Log weight check
-        // console.log(debug);
+        //console.log(debug);
 
         // Reassign best match entry
         theRow = rows[matchCounter[index].row];
 
         // --DEBUG-- Log best match entry
-        //console.log(theRow.Track);
+        console.log(theRow.Track);
 
         // Format acquired data
         embed = await this.client.handler.format(this.client, theRow);
