@@ -64,8 +64,7 @@ module.exports = class extends Command
     //message.say(`${processedArgs}`);
     //message.say(`${numTracks}, ${desiredKey}, ${desiredBPM}, ${desiredGenre}`);
     
-    getRows = require('./resources/modules/rows.js');
-    const rows = getRows();
+    const rows = client.getRows.getRows();
     
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try

@@ -9,6 +9,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 const handler = require("./resources/modules/handler.js");
+const getRows = require('./resources/modules/rows.js');
 
 const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
@@ -37,6 +38,7 @@ client.fetch = fetch;
 client.fs = fs;
 
 client.handler = handler;
+client.getRows = getRows;
 
 client.colors = colors;
 client.keyCodes = keyCodes;
