@@ -37,7 +37,7 @@ module.exports = class extends Command
     const embed = new this.client.Discord.MessageEmbed();
     const rows = client.getRows.getRows();
 
-    var track, embed;
+    var track;
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
