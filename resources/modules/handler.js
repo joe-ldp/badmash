@@ -101,6 +101,9 @@ exports.format = async (client, row) =>
 // Custom error handling management
 exports.throw = async (client, message, err) =>
 {
+  // Error log
+  console.error(err);
+
   // Error notification
   message.channel.send(`The bot has experienced a critical error. Notifying developers and restarting...`);
 
