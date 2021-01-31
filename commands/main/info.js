@@ -37,10 +37,8 @@ module.exports = class extends Command
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
 
-    // Create a connection between the bot and the Google sheet
-    const doc = this.client.doc;
-    await doc.useServiceAccountAuth(this.client.google);
-    await doc.loadInfo();
+    getRows = require('./resources/modules/rows.js');
+    const rows = getRows();
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
