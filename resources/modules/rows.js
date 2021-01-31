@@ -3,10 +3,10 @@
 async function getRows(client)
 {
     // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
-    const doc = this.client.doc;
+    const doc = client.doc;
 
     // Create a connection between the bot and the Google sheet
-    await doc.useServiceAccountAuth(this.client.google);
+    await doc.useServiceAccountAuth(client.google);
     await doc.loadInfo();
 
     // Automatically find the Catalog sheet. Yay!
