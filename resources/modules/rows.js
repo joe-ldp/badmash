@@ -1,6 +1,6 @@
 module.exports = 
 {
-    getRows: () =>
+    async getRows: () =>
     {
         // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
         const doc = this.client.doc;
