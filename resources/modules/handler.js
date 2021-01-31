@@ -39,7 +39,7 @@ exports.format = async (client, row) =>
       embedDesc += `\n⚠️ Possible explicit content`; break;
   }
 
-  // Initialize variables for fetching the cover art of from the Monstercat API
+  // Initialize variables for fetching the cover art from the Monstercat API
   var releaseID, imageURL;
 
   // Embed uses default image (Monstercat logo) if fetching fails
@@ -74,7 +74,7 @@ exports.format = async (client, row) =>
   if (!embed.thumbnail) embed.setThumbnail(`${defaultImage}`);
   
   // --DEBUG-- Send a copy of the cover art on Discord
-  // client.channels.cache.get("535282119791083520").send(`${imageURL}`);
+  client.channels.cache.get("535282119791083520").send(`${imageURL}`);
   
   // Build the embed
   embed
