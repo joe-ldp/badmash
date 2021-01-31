@@ -21,4 +21,4 @@ module.exports = (async function(client)
     const rows = await sheet.getRows();
 
     return rows;
-};
+});
