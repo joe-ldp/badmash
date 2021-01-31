@@ -47,7 +47,7 @@ module.exports = class extends Command
         return message.reply("You entered nothing.");
 
       // --DEBUG-- Log user input
-      console.log("Lookup initiated: ", args);
+      //console.log("Lookup initiated: ", args);
 
       // Reinitialize inputs as lowercase
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
@@ -98,7 +98,7 @@ module.exports = class extends Command
               rowMatches += weight;
             }
             // --DEBUG-- Log results
-            console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
+            //console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
           }
           else continue;
         }
@@ -132,7 +132,7 @@ module.exports = class extends Command
         theRow = rows[matchCounter[index].row];
 
         // --DEBUG-- Log best match entry
-        console.log(theRow.Track);
+        //console.log(theRow.Track);
 
         // Format acquired data
         embed = await this.client.handler.format(this.client, theRow);

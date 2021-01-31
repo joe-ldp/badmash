@@ -68,7 +68,7 @@ exports.format = async (client, row) =>
   else embed.setThumbnail(`${imageURL}`);
   
   // --DEBUG-- Log embed.thumbnail if it exists
-  console.log(embed.thumbnail);
+  //console.log(embed.thumbnail);
   
   // Set the embed thumbnail to the default image, if the bot fails to use the cover art for some fucking reason
   if (!embed.thumbnail) embed.setThumbnail(`${defaultImage}`);
