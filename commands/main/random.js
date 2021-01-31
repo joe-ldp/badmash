@@ -34,26 +34,14 @@ module.exports = class extends Command
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
 
-    // Create a connection between the bot and the Google sheet
-    const doc = this.client.doc;
-    await doc.useServiceAccountAuth(this.client.google);
-    await doc.loadInfo();
+    getRows = require('./resources/modules/rows.js');
+    const rows = getRows();
 
     var track, embed;
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
     {
-        // Automatically find the Catalog sheet. Yay!
-        var sheetId = 0;
-        doc.sheetsByIndex.forEach(x => {
-            if (x.title == "Catalog") sheetId = x.sheetId;
-        });
-
-        // Get the sheet and an obj array containing its rows
-        const sheet = doc.sheetsById[sheetId];
-        const rows = await sheet.getRows();
-
         do
         {
             track = rows[Math.floor(Math.random() * rows.length)];

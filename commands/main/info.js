@@ -61,16 +61,6 @@ module.exports = class extends Command
           mergedArgs = args.join(" "), 
           dupes = [ "remix", "remake", "vip", "classical", "mix", "acoustic"];
 
-      // Automatically find the Catalog sheet. Yay!
-      var sheetId;
-      doc.sheetsByIndex.forEach(x => {
-        if (x.title == "Catalog") sheetId = x.sheetId;
-      });
-
-      // Get the sheet and an obj array containing its rows
-      const sheet = doc.sheetsById[sheetId];
-      const rows = await sheet.getRows();
-
       // Iterate through rows...
       for (var rowNum = 0; rowNum < sheet.rowCount - 1; rowNum++)
       {
