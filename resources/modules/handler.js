@@ -49,7 +49,7 @@ exports.format = async (client, row) =>
   await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${row.ID}`)
     .then(res => res.json())
     .then(json => (releaseID = json.release.id))
-    .catch(err => console.error(err));
+    .catch(err => this.client.handler.throw(client, client.message, err));
 
   // --DEBUG-- log the track's release ID (not to be confused with the catalog ID)
   // console.log(releaseID);
@@ -57,7 +57,7 @@ exports.format = async (client, row) =>
   // Fetch the cover art URL from AWS
   await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=3000`)
     .then(res => (imageURL = res.url.split("?")[0]))
-    .catch(err => console.error(err));
+    .catch(err => this.client.handler.throw(client, client.message, err));
 
   // --DEBUG-- Log the fetched image URL
   // console.log(imageURL);
