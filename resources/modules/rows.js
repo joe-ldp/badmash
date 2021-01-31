@@ -13,7 +13,7 @@ exports.getRows = async (client) =>
     // Automatically find the Catalog sheet. Yay!
     var sheetId = 0;
     doc.sheetsByIndex.forEach(x => {
-    if (x.title == "Catalog") sheetId = x.sheetId;
+        if (x.title == "Catalog") sheetId = x.sheetId;
     });
 
     // Get the sheet and an obj array containing its rows
