@@ -37,8 +37,6 @@ module.exports = class extends Command
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
 
-    const embed = new this.client.Discord.MessageEmbed();
-
     const rows = await this.client.getRows.getRows(this.client);
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
@@ -55,7 +53,7 @@ module.exports = class extends Command
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
 
       // Initialize required variables for sheet lookup
-      var rowStr, theRow,
+      var embed, rowStr, theRow,
           rowMatches = 0,
           anyMatch = false,
           matchCounter = [],
