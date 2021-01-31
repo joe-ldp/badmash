@@ -1,4 +1,5 @@
-exports.colorize = (client) =>
+//exports.colorize = (client) =>
+module.exports = (async function(client)
 {
     // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
     const doc = this.client.doc;
