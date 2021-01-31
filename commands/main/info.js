@@ -63,7 +63,7 @@ module.exports = class extends Command
           dupes = [ "remix", "remake", "vip", "classical", "mix", "acoustic"];
 
       // Iterate through rows...
-      console.log(rows);
+      //console.log(rows);
       for (var rowNum = 0; rowNum < rows.length - 1; rowNum++)
       {
         // Create a copy of the current row
