@@ -4,8 +4,6 @@ async function getRows(client)
 {
     // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
     const doc = this.client.doc;
-    const embed = new this.client.Discord.MessageEmbed();
-    const keyCodes = this.client.keyCodes;
 
     // Create a connection between the bot and the Google sheet
     await doc.useServiceAccountAuth(this.client.google);

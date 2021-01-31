@@ -55,7 +55,7 @@ module.exports = class extends Command
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
 
       // Initialize required variables for sheet lookup
-      var embed, rowStr, theRow,
+      var rowStr, theRow,
           rowMatches = 0,
           anyMatch = false,
           matchCounter = [],
