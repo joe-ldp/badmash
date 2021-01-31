@@ -63,7 +63,10 @@ module.exports = class extends Command
 
     //message.say(`${processedArgs}`);
     //message.say(`${numTracks}, ${desiredKey}, ${desiredBPM}, ${desiredGenre}`);
-    
+
+    const embed = new this.client.Discord.MessageEmbed();
+    const keyCodes = this.client.keyCodes;
+
     const rows = this.client.getRows.getRows();
     
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue

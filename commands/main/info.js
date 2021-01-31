@@ -37,7 +37,9 @@ module.exports = class extends Command
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
 
-    const rows = this.client.getRows.getRows();
+    const embed = new this.client.Discord.MessageEmbed();
+
+    const rows = this.client.getRows;
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try

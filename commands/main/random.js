@@ -34,6 +34,7 @@ module.exports = class extends Command
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
 
+    const embed = new this.client.Discord.MessageEmbed();
     const rows = client.getRows.getRows();
 
     var track, embed;
