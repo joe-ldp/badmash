@@ -100,7 +100,7 @@ module.exports = class extends Command
               rowMatches += weight;
             }
             // --DEBUG-- Log results
-            console.log(`input "${args[i]}" found in row ${x}: ${rowStr}`);
+            console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
           }
           else continue;
         }
