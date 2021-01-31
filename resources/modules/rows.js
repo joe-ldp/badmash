@@ -1,5 +1,6 @@
 //exports.colorize = (client) =>
-module.exports = (async function(client)
+//module.exports = (async function(client)
+async function getRows(client)
 {
     // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
     const doc = this.client.doc;
@@ -21,4 +22,6 @@ module.exports = (async function(client)
     const rows = await sheet.getRows();
 
     return rows;
-});
+}
+
+module.exports.getRows = getRows;
