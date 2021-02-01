@@ -52,11 +52,7 @@ exports.format = async (client, row) =>
     default:  embedDesc = `⚠️ Not safe for content creators`; break;
   }
 
-  let licensability = 
-  [
-    { "symbol": "Y", "text": "✅ Safe for content creators" },
-    { "symbol": "*", "text": "⚠️ Not safe for content creators" }
-  ];
+  
 
 
   
