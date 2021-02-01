@@ -14,7 +14,7 @@ const getRows = require('./resources/modules/rows.js');
 const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
-const contentWarning = require('.resources/objects/contentWarning.json');
+const contentWarning = require('./resources/objects/contentWarning.json');
 const licensability = require('./resources/objects/licensability.json');
 
 var google = require('./resources/keys/google.json');
