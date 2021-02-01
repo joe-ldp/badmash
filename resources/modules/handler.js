@@ -75,10 +75,10 @@ exports.format = async (client, row) =>
   //console.log(embed.thumbnail);
   
   // Set the embed thumbnail to the default image, if the bot fails to use the cover art for some fucking reason
-  if (!embed.thumbnail) embed.setThumbnail(`${defaultImage}`);
+  if (!embed.thumbnail) embed.setThumbnail(`${coverImage}`);
   
   // --DEBUG-- Send a copy of the cover art on Discord
-  client.channels.cache.get("535282119791083520").send(`${imageURL}`);
+  //client.channels.cache.get("535282119791083520").send(`${imageURL}`);
   
   
   // Build the embed
