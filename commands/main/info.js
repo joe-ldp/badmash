@@ -106,12 +106,12 @@ module.exports = class extends Command
             {
               dupes.forEach(dupe =>
               {
-                if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) continue;
+                if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) return;
                 anyMatch = true;
                 rowMatches += weight;
               });
             }
-            else continue;
+            else return;
           });
         });
 
