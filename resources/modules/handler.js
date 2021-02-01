@@ -1,3 +1,58 @@
+exports.getCover = async(client, ID) =>
+{
+  // Initialize variables for fetching the cover art from the Monstercat API
+  var releaseID, imageURL;
+
+  // Embed uses default image (Monstercat logo) if fetching fails
+  var defaultImage = "https://i.imgur.com/PoFZk7n.png";
+
+  // Fetch the release ID from the Monstercat API
+  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${row.ID}`)
+    .then(res => res.json())
+    .then(json => (releaseID = json.release.id))
+    .catch(err => console.error(err));
+
+  // --DEBUG-- log the track's release ID (not to be confused with the catalog ID)
+  // console.log(releaseID);
+
+  // Fetch the cover art URL from AWS
+  const coverResponse = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=256`);
+  const coverImage = await coverResponse.buffer();
+
+  // client.channels.cache.get("535282119791083520").send('',
+  // {
+  //   embed:
+  //   {
+  //     image: { url: 'attachment://cover.jpg' }
+  //   },
+  //   files:
+  //   [
+  //     {
+  //       attachment: coverImage, filename: 'cover.jpg'
+  //     }
+  //   ]
+  // });
+
+  return coverImage;
+  
+  // --DEBUG-- Log the fetched image URL
+  // console.log(imageURL);
+
+  // Set the embed thumbnail to the track's cover art, or to the default image if fetching fails
+  
+  //if (!releaseID) embed.setThumbnail(`${defaultImage}`);
+  //else embed.setThumbnail(`attachment://cover.jpg`);
+  
+  // --DEBUG-- Log embed.thumbnail if it exists
+  //console.log(embed.thumbnail);
+  
+  // Set the embed thumbnail to the default image, if the bot fails to use the cover art for some fucking reason
+  //if (!embed.thumbnail) embed.setThumbnail(`${coverImage}`);
+  
+  // --DEBUG-- Send a copy of the cover art on Discord
+  //client.channels.cache.get("535282119791083520").send(`${imageURL}`);
+}
+
 // Formatting handler for lookup embed
 exports.format = async (client, row) =>
 {
@@ -38,48 +93,6 @@ exports.format = async (client, row) =>
     default: // Other / unknown / unmarked
       embedDesc += `\n⚠️ Possible explicit content`; break;
   }
-
-  // Initialize variables for fetching the cover art from the Monstercat API
-  var releaseID, imageURL;
-
-  // Embed uses default image (Monstercat logo) if fetching fails
-  var defaultImage = "https://i.imgur.com/PoFZk7n.png";
-
-  // Fetch the release ID from the Monstercat API
-  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${row.ID}`)
-    .then(res => res.json())
-    .then(json => (releaseID = json.release.id))
-    .catch(err => console.error(err));
-
-  // --DEBUG-- log the track's release ID (not to be confused with the catalog ID)
-  // console.log(releaseID);
-
-  // Fetch the cover art URL from AWS
-  const coverResponse = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=256`);
-  const coverImage = await coverResponse.buffer();
-
-  client.channels.cache.get("535282119791083520").send('', { embed: {
-    image: { url: 'attachment://cover.jpg' }
-  },
-  files: [ { attachment: coverImage, filename: 'cover.jpg' } ] });
-  
-  // --DEBUG-- Log the fetched image URL
-  // console.log(imageURL);
-
-  // Set the embed thumbnail to the track's cover art, or to the default image if fetching fails
-  
-  if (!releaseID) embed.setThumbnail(`${defaultImage}`);
-  else embed.setThumbnail(`${imageURL}`);
-  
-  // --DEBUG-- Log embed.thumbnail if it exists
-  //console.log(embed.thumbnail);
-  
-  // Set the embed thumbnail to the default image, if the bot fails to use the cover art for some fucking reason
-  if (!embed.thumbnail) embed.setThumbnail(`${coverImage}`);
-  
-  // --DEBUG-- Send a copy of the cover art on Discord
-  //client.channels.cache.get("535282119791083520").send(`${imageURL}`);
-  
   
   // Build the embed
   embed
