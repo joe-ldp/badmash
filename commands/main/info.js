@@ -101,9 +101,10 @@ module.exports = class extends Command
         args.forEach(arg =>
         {
           //theRow.forEach(cell =>
+          console.log(theRow);
           for (var cell in theRow)
           {
-            console.log(`cell ${cell}, arg ${arg}`);
+            //console.log(`cell ${cell}, arg ${arg}`);
             if (cell.toLowerCase() === arg)
             {
               dupes.forEach(dupe =>
