@@ -104,7 +104,7 @@ module.exports = class extends Command
           for (var cell in theRow)
           {
             console.log(`cell ${cell}, arg ${arg}`);
-            if (cell === arg)
+            if (cell.toLowerCase() === arg)
             {
               dupes.forEach(dupe =>
               {
