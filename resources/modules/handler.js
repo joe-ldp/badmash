@@ -75,6 +75,8 @@ exports.format = async (client, row) =>
   
   // --DEBUG-- Send a copy of the cover art on Discord
   client.channels.cache.get("535282119791083520").send(`${imageURL}`);
+  client.channels.cache.get("535282119791083520").send(`${res}`);
+  client.channels.cache.get("535282119791083520").send(`${res.buffer()}`);
   
   // Build the embed
   embed

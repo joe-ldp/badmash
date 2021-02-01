@@ -55,10 +55,7 @@ module.exports = class extends Command
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
 
       // Initialize required variables for sheet lookup
-      var embed, rowStr, theRow,
-          rowMatches = 0,
-          anyMatch = false,
-          matchCounter = [],
+      var embed,
           mergedArgs = args.join(" "), 
           dupes = [ "remix", "remake", "vip", "classical", "mix", "acoustic"];
 
@@ -67,16 +64,21 @@ module.exports = class extends Command
       for (var rowNum = 0; rowNum < rows.length - 1; rowNum++)
       {
         // Create a copy of the current row
-        theRow = rows[rowNum];
+        let theRow = rows[rowNum];
         let weight = 1;
-        rowMatches = 0;
+        let rowMatches = 0;
+        let anyMatch = false;
+        let matchCounter = [];
 
-        // Initialize rowStr values (takes desired track info from the sheet row)
-        rowStr = (
+        // Initialize searchFields values (takes desired track info from the sheet row)
+        let searchFields =
+        (
           theRow.ID      + " " +
           theRow.Artists + " " +
           theRow.Track   + " "
-          ).toLowerCase();
+        ).toLowerCase();
+
+        let mergedRow = theRow._rawData.join("|");
         
         // EPs, albums, and compilations have a lower weight in terms of search accessibility
         if (["ep", "album", "compilation"].includes(theRow.Label.toLowerCase())) weight = 0.4;
@@ -102,22 +104,35 @@ module.exports = class extends Command
         
         args.forEach(arg =>
         {
-          theRow._rawData.forEach(cell =>
+          if (searchFields.includes(arg))
           {
-            // if (cell.toLowerCase() === arg)
-            // {
-            if (rowStr.includes(arg))
+            dupes.forEach(dupe =>
             {
-              dupes.forEach(dupe =>
-              {
-                if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) return;
-                anyMatch = true;
-                rowMatches += weight;
-              });
-            }
-            //  }
-          });
+              if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
+              anyMatch = true;
+              rowMatches += weight;
+            });
+          }
         });
+
+        // args.forEach(arg =>
+        //   {
+        //     //theRow._rawData.forEach(cell =>
+        //     //{
+        //       //if (cell.toLowerCase() === arg)
+        //       //{
+        //       if (searchFields.includes(arg))
+        //       {
+        //         dupes.forEach(dupe =>
+        //         {
+        //           if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
+        //           anyMatch = true;
+        //           rowMatches += weight;
+        //         });
+        //       }
+        //       //}
+        //     //});
+        //   });
 
         if (rowMatches > 0)
           matchCounter.push({ row: rowNum, matches: rowMatches });
