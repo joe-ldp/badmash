@@ -59,9 +59,9 @@ exports.format = async (client, row) =>
     .then(res => (imageURL = res.url.split("?")[0]))
     .catch(err => console.error(err));
 
-  var bruh;
+  var imageBuffer;
   await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=3000`)
-    .then(res => (bruh = res))
+    .then(res => (imageBuffer = res.buffer()))
     .catch(err => console.error(err));
  
   
@@ -81,9 +81,8 @@ exports.format = async (client, row) =>
   
   // --DEBUG-- Send a copy of the cover art on Discord
   client.channels.cache.get("535282119791083520").send(`${imageURL}`);
-  client.channels.cache.get("535282119791083520").send(`${bruh.headers}`);
-  var why = await bruh.buffer();
-  client.channels.cache.get("535282119791083520").send(`${why}`);
+  client.channels.cache.get("535282119791083520").send(`${imageBuffer}`);
+  
   
   // Build the embed
   embed
