@@ -59,10 +59,18 @@ exports.format = async (client, row) =>
     .then(res => (imageURL = res.url.split("?")[0]))
     .catch(err => console.error(err));
 
-  var imageBuffer;
-  imageBuffer = await imageURL.buffer();
+  // var imageBuffer;
+  // imageBuffer = await imageURL.buffer();
  
-  console.log(imageBuffer);
+  // console.log(imageBuffer);
+
+  const coverResponse = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=3000`);
+  const coverImage = await coverResponse.buffer();
+
+  client.channels.cache.get("535282119791083520").send('', { embed: {
+    image: { url: 'attachment://cover.jpg' }
+  },
+  files: [ { attachment: coverImage, filename: 'cover.jpg' } ] });
   
   // --DEBUG-- Log the fetched image URL
   // console.log(imageURL);
