@@ -169,7 +169,7 @@ module.exports = class extends Command
         embed = await this.client.handler.format(this.client, theRow);
         let coverImage = this.client.handler.getCover(this.client, theRow.ID);
         embed.attachFiles(coverImage)
-             .setImage('cover.jpg');
+             .setImage('attachment://cover.jpg');
       }
       // Sad violin music
       else return message.reply("I cannot find a match for that search entry.");
