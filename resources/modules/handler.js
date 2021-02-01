@@ -65,7 +65,7 @@ exports.format = async (client, row) =>
     .catch(err => console.error(err));
 
   var imageBuffer;
-  await imageBuffer = image.buffer();
+  imageBuffer = await image.buffer();
  
   
   // --DEBUG-- Log the fetched image URL
