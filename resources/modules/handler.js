@@ -58,7 +58,7 @@ exports.format = async (client, row) =>
   await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=3000`)
     .then(res => (imageURL = res.url.split("?")[0]))
     .catch(err => console.error(err));
-
+  
   // --DEBUG-- Log the fetched image URL
   // console.log(imageURL);
 

@@ -104,17 +104,18 @@ module.exports = class extends Command
         {
           theRow._rawData.forEach(cell =>
           {
-            if (cell.toLowerCase() === arg)
+            // if (cell.toLowerCase() === arg)
+            // {
+            //   dupes.forEach(dupe =>
+            //   {
+            if (rowStr.includes(arg))
             {
-              dupes.forEach(dupe =>
-              {
-                if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) return;
-                anyMatch = true;
-                rowMatches += weight;
-              });
-
-              
+              if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) return;
+              anyMatch = true;
+              rowMatches += weight;
             }
+            //    });
+            //  }
           });
         });
 
