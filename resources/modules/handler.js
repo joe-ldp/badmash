@@ -55,7 +55,7 @@ exports.format = async (client, row) =>
   // console.log(releaseID);
 
   // Fetch the cover art URL from AWS
-  const coverResponse = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=3000`);
+  const coverResponse = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=256`);
   const coverImage = await coverResponse.buffer();
 
   client.channels.cache.get("535282119791083520").send('', { embed: {
