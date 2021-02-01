@@ -20,9 +20,9 @@ exports.getCover = async(client, ID) =>
 
   // Fetch the cover art URL from AWS
   const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=256`);
-  console.log(coverURL);
+  //console.log(coverURL);
   const coverImage = await coverURL.buffer();
-  console.log(coverImage);
+  //console.log(coverImage);
 
   // client.channels.cache.get("535282119791083520").send('',
   // {
