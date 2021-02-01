@@ -118,7 +118,7 @@ module.exports = class extends Command
               console.log(`input "${arg}" found in ${rowStr}`);
             }
             else return;
-          }
+          });
         });
 
         if (rowMatches > 0)
