@@ -76,7 +76,7 @@ exports.format = async (client, row) =>
   //   cw = "\n⚠️ Possible explicit content";
   // }
   
-  let coverImage = await client.handler.getCover(this.client, row.ID);
+  let coverImage = await client.handler.getCover(client, row.ID);
   
   // Build the embed
   embed
