@@ -39,7 +39,7 @@ module.exports = class extends Command
     
     const rows = await this.client.getRows.getRows(this.client);
 
-    //console.log(rows[0]);
+    console.log(Array.from(rows[0]));
 
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
@@ -103,10 +103,7 @@ module.exports = class extends Command
         args.forEach(arg =>
         {
           theRow._rawData.forEach(cell =>
-          //console.log(theRow);
-          //for (var cell in theRow)
           {
-            //console.log(`cell ${cell}, arg ${arg}`);
             if (cell.toLowerCase() === arg)
             {
               dupes.forEach(dupe =>
@@ -115,7 +112,6 @@ module.exports = class extends Command
                 anyMatch = true;
                 rowMatches += weight;
               });
-              console.log(`input "${arg}" found in ${rowStr}`);
             }
             else return;
           });
