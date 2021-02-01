@@ -55,7 +55,7 @@ module.exports = class extends Command
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
 
       // Initialize required variables for sheet lookup
-      var embed,
+      var embed, theRow,
           anyMatch = false,
           matchCounter = [],
           mergedArgs = args.join(" "), 
@@ -66,7 +66,7 @@ module.exports = class extends Command
       for (var rowNum = 0; rowNum < rows.length - 1; rowNum++)
       {
         // Create a copy of the current row
-        let theRow = rows[rowNum];
+        theRow = rows[rowNum];
         let weight = 1;
         let rowMatches = 0;
 
