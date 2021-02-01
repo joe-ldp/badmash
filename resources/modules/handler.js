@@ -53,28 +53,28 @@ exports.format = async (client, row) =>
   }
   
   // Detect explicit content and mark accordingly
-  switch (row.E)
+  // switch (row.E)
+  // {
+  //   case 'E': // Explicit
+  //     embedDesc += `\n⚠️ Explicit content`; break;
+
+  //   case 'C': // Clean
+  //   case 'I': // Instrumental
+  //     embedDesc += `\n✅ No explicit content`; break;
+
+  //   default: // Other / unknown / unmarked
+  //     embedDesc += `\n⚠️ Possible explicit content`; break;
+  // }
+
+  var cw;
+  try 
   {
-    case 'E': // Explicit
-      embedDesc += `\n⚠️ Explicit content`; break;
-
-    case 'C': // Clean
-    case 'I': // Instrumental
-      embedDesc += `\n✅ No explicit content`; break;
-
-    default: // Other / unknown / unmarked
-      embedDesc += `\n⚠️ Possible explicit content`; break;
+    cw = client.contentWarning.find(obj => obj.symbol.toLowerCase() == row.E.toLowerCase()).text;
   }
-
-  // var cw;
-  // try 
-  // {
-  //   cw = client.contentWarning.find(obj => obj.symbol.toLowerCase() == row.E.toLowerCase()).text;
-  // }
-  // catch (err)
-  // {
-  //   cw = "\n⚠️ Possible explicit content";
-  // }
+  catch (err)
+  {
+    cw = "\n⚠️ Possible explicit content";
+  }
   
   let coverImage = await client.handler.getCover(client, row.ID);
   
