@@ -12,6 +12,9 @@ exports.getCover = async(client, ID) =>
     .then(json => (releaseID = json.release.id))
     .catch(err => console.error(err));
 
+  console.log(ID);
+  console.log(releaseID);
+  
   // --DEBUG-- log the track's release ID (not to be confused with the catalog ID)
   // console.log(releaseID);
 
