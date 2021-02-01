@@ -168,8 +168,9 @@ module.exports = class extends Command
         // Format acquired data
         embed = await this.client.handler.format(this.client, theRow);
         
-        let coverImage = this.client.handler.getCover(this.client, theRow.ID);
+        let coverImage = await this.client.handler.getCover(this.client, theRow.ID);
         console.log(coverImage);
+        
         embed.attachFiles(coverImage)
              .setImage('attachment://cover.jpg');
       }
