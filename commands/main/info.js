@@ -170,9 +170,9 @@ module.exports = class extends Command
         
         let coverImage = await this.client.handler.getCover(this.client, theRow.ID);
         console.log(coverImage);
-        
+
         embed.attachFiles(coverImage)
-             .setImage('attachment://cover.jpg');
+             .setThumbnail('attachment://cover.jpg');
       }
       // Sad violin music
       else return message.reply("I cannot find a match for that search entry.");
