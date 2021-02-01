@@ -7,7 +7,7 @@ exports.getCover = async(client, ID) =>
   var defaultImage = "https://i.imgur.com/PoFZk7n.png";
 
   // Fetch the release ID from the Monstercat API
-  client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
+  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
     .then(res => res.json())
     .then(json => (releaseID = json.release.id))
     .catch(err => console.error(err));
