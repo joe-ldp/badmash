@@ -168,10 +168,6 @@ module.exports = class extends Command
         
         // Format acquired data
         embed = await this.client.handler.format(this.client, theRow);
-        let coverImage = await this.client.handler.getCover(this.client, theRow.ID);
-
-        embed.attachFiles(coverImage)
-             .setThumbnail('attachment://cover.jpg');
       }
       // Sad violin music
       else return message.reply("I cannot find a match for that search entry.");

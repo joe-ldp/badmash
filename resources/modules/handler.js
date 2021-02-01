@@ -51,6 +51,14 @@ exports.format = async (client, row) =>
     case 'Y': embedDesc = `✅ Safe for content creators`; break;
     default:  embedDesc = `⚠️ Not safe for content creators`; break;
   }
+
+  let licensability = 
+  [
+    { "symbol": "Y", "text": "✅ Safe for content creators" },
+    { "symbol": "*", "text": "⚠️ Not safe for content creators" }
+  ];
+
+
   
   // Detect explicit content and mark accordingly
   switch (row.E)
@@ -65,6 +73,18 @@ exports.format = async (client, row) =>
     default: // Other / unknown / unmarked
       embedDesc += `\n⚠️ Possible explicit content`; break;
   }
+
+  // var cw;
+  // try 
+  // {
+  //   cw = client.contentWarning.find(obj => obj.symbol.toLowerCase() == row.E.toLowerCase()).text;
+  // }
+  // catch (err)
+  // {
+  //   cw = "\n⚠️ Possible explicit content";
+  // }
+  
+  let coverImage = await client.handler.getCover(this.client, theRow.ID);
   
   // Build the embed
   embed
@@ -82,6 +102,9 @@ exports.format = async (client, row) =>
     .addField(`**BPM:**`,              `${row.BPM}`, true)
     .addField(`**Key:**`,              `${row.Key}`, true)
     .addField(`**Length:**`,           `${row.Length}`, true)
+  
+    .attachFiles(coverImage)
+    .setThumbnail('attachment://cover.jpg')
   ;
   
   // Return the formatted embed
