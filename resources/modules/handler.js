@@ -33,7 +33,7 @@ exports.getCover = async(client, ID) =>
   //   ]
   // });
 
-  const attachment = new Discord.MessageAttachment('coverImage', 'cover.png');
+  const attachment = new client.Discord.MessageAttachment('coverImage', 'cover.png');
 
   return attachment;
 
