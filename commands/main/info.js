@@ -106,15 +106,15 @@ module.exports = class extends Command
           {
             // if (cell.toLowerCase() === arg)
             // {
-            //   dupes.forEach(dupe =>
-            //   {
             if (rowStr.includes(arg))
             {
-              if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) return;
-              anyMatch = true;
-              rowMatches += weight;
+              dupes.forEach(dupe =>
+              {
+                if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) return;
+                anyMatch = true;
+                rowMatches += weight;
+              });
             }
-            //    });
             //  }
           });
         });
