@@ -112,8 +112,9 @@ module.exports = class extends Command
                 anyMatch = true;
                 rowMatches += weight;
               });
+
+              
             }
-            else return;
           });
         });
 
