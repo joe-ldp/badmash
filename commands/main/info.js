@@ -164,12 +164,11 @@ module.exports = class extends Command
 
         // --DEBUG-- Log best match entry
         //console.log(theRow.Track);
-
+        
+        
         // Format acquired data
         embed = await this.client.handler.format(this.client, theRow);
-        
         let coverImage = await this.client.handler.getCover(this.client, theRow.ID);
-        console.log(coverImage);
 
         embed.attachFiles(coverImage)
              .setThumbnail('attachment://cover.jpg');
