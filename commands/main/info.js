@@ -28,7 +28,7 @@ module.exports = class extends Command
   async run (message)
   {
     // Initialize args
-    const args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g);
+    const args = message.content.slice(this.client.commandPrefix.length).split(/ +/g);
     args.shift();
     
     // Easy access for the bot avatar
@@ -36,14 +36,14 @@ module.exports = class extends Command
     
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
-
+    
     const rows = await this.client.getRows.getRows(this.client);
-  
+
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
     {
-      // Prevent crash from entering empty args
-      if (!args[0])
+      // Prevent crash if user enters empty args
+      if (args.length === 0)
         return message.reply("You entered nothing.");
 
       // --DEBUG-- Log user input
@@ -66,7 +66,7 @@ module.exports = class extends Command
       {
         // Create a copy of the current row
         theRow = rows[rowNum];
-        var weight = 1;
+        let weight = 1;
         rowMatches = 0;
 
         // Initialize rowStr values (takes desired track info from the sheet row)
@@ -75,14 +75,9 @@ module.exports = class extends Command
           theRow.Artists + " " +
           theRow.Track   + " "
           ).toLowerCase();
-
+        
         // EPs, albums, and compilations have a lower weight in terms of search accessibility
-        if (theRow.Label.toLowerCase() == "ep" ||
-            theRow.Label.toLowerCase() == "album" ||
-            theRow.Label.toLowerCase() == "compilation")
-        {
-          weight = 0.4;
-        }
+        if (["ep", "album", "compilation"].includes(theRow.Label.toLowerCase())) weight = 0.4;
 
         // Iterate through user args...
         for (var i = 0; i < args.length; i++)
@@ -98,12 +93,17 @@ module.exports = class extends Command
               rowMatches += weight;
             }
             // --DEBUG-- Log results
-            //console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
+            console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
           }
           else continue;
         }
 
-        if (rowMatches != 0)
+        // args.forEach(arg =>
+        // {
+          
+        // });
+
+        if (rowMatches > 0)
           matchCounter.push({ row: rowNum, matches: rowMatches });
       }
 
