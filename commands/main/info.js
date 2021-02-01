@@ -28,7 +28,7 @@ module.exports = class extends Command
   async run (message)
   {
     // Initialize args
-    const args = message.content.slice(this.client.commandPrefix.length).split(/ +/g);
+    const args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g);
     args.shift();
     
     // Easy access for the bot avatar
@@ -80,28 +80,39 @@ module.exports = class extends Command
         if (["ep", "album", "compilation"].includes(theRow.Label.toLowerCase())) weight = 0.4;
 
         // Iterate through user args...
-        for (var i = 0; i < args.length; i++)
-        {
-          // ...and check for matches within rows
-          if (rowStr.includes(args[i] + " "))
-          {
-            // Ignore other renditions of a track when uncalled for
-            for (var k = 0; k < dupes.length; k++)
-            {
-              if (rowStr.includes(dupes[k]) && !mergedArgs.includes(dupes[k])) continue;
-              anyMatch = true;
-              rowMatches += weight;
-            }
-            // --DEBUG-- Log results
-            console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
-          }
-          else continue;
-        }
-
-        // args.forEach(arg =>
+        // for (var i = 0; i < args.length; i++)
         // {
-          
-        // });
+        //   // ...and check for matches within rows
+        //   if (rowStr.includes(args[i] + " "))
+        //   {
+        //     // Ignore other renditions of a track when uncalled for
+        //     for (var k = 0; k < dupes.length; k++)
+        //     {
+        //       if (rowStr.includes(dupes[k]) && !mergedArgs.includes(dupes[k])) continue;
+        //       anyMatch = true;
+        //       rowMatches += weight;
+        //     }
+        //     // --DEBUG-- Log results
+        //     //console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
+        //   }
+        //   else continue;
+        // }
+
+        args.forEach(arg =>
+        {
+          theRow.forEach(cell =>
+          {
+            if (cell === arg)
+            {
+              dupes.forEach(dupe =>
+              {
+                if (rowStr.includes(dupe) && !mergedArgs.includes(dupe)) continue;
+                anyMatch = true;
+                rowMatches += weight;
+              });
+            }
+          });
+        });
 
         if (rowMatches > 0)
           matchCounter.push({ row: rowNum, matches: rowMatches });
