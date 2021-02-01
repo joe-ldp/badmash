@@ -88,7 +88,7 @@ module.exports = class extends Command
         for (var i = 0; i < args.length; i++)
         {
           // ...and check for matches within rows
-          if (rowStr.includes(args[i]))
+          if (rowStr.includes(args[i] + " "))
           {
             // Ignore other renditions of a track when uncalled for
             for (var k = 0; k < dupes.length; k++)
