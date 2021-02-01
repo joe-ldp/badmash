@@ -56,6 +56,8 @@ module.exports = class extends Command
 
       // Initialize required variables for sheet lookup
       var embed,
+          anyMatch = false,
+          matchCounter = [],
           mergedArgs = args.join(" "), 
           dupes = [ "remix", "remake", "vip", "classical", "mix", "acoustic"];
 
@@ -67,8 +69,6 @@ module.exports = class extends Command
         let theRow = rows[rowNum];
         let weight = 1;
         let rowMatches = 0;
-        let anyMatch = false;
-        let matchCounter = [];
 
         // Initialize searchFields values (takes desired track info from the sheet row)
         let searchFields =
