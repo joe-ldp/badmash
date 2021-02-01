@@ -111,6 +111,7 @@ module.exports = class extends Command
                 rowMatches += weight;
               });
             }
+            else continue;
           });
         });
 
