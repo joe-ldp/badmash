@@ -51,10 +51,6 @@ exports.format = async (client, row) =>
     case 'Y': embedDesc = `✅ Safe for content creators`; break;
     default:  embedDesc = `⚠️ Not safe for content creators`; break;
   }
-
-  
-
-
   
   // Detect explicit content and mark accordingly
   switch (row.E)
@@ -80,7 +76,7 @@ exports.format = async (client, row) =>
   //   cw = "\n⚠️ Possible explicit content";
   // }
   
-  let coverImage = await client.handler.getCover(this.client, theRow.ID);
+  let coverImage = await client.handler.getCover(this.client, row.ID);
   
   // Build the embed
   embed
