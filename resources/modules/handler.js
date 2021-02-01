@@ -17,7 +17,9 @@ exports.getCover = async(client, ID) =>
 
   // Fetch the cover art URL from AWS
   const coverResponse = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=256`);
+  console.log(coverResponse);
   const coverImage = await coverResponse.buffer();
+  console.log(coverImage);
 
   // client.channels.cache.get("535282119791083520").send('',
   // {
@@ -34,6 +36,7 @@ exports.getCover = async(client, ID) =>
   // });
 
   const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
+  console.log(attachment);
 
   return attachment;
 
