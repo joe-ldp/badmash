@@ -100,7 +100,8 @@ module.exports = class extends Command
 
         args.forEach(arg =>
         {
-          theRow.forEach(cell =>
+          //theRow.forEach(cell =>
+          for (var cell in theRow)
           {
             if (cell === arg)
             {
@@ -111,8 +112,8 @@ module.exports = class extends Command
                 rowMatches += weight;
               });
             }
-            else return;
-          });
+            else continue;
+          }
         });
 
         if (rowMatches > 0)
