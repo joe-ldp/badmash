@@ -103,6 +103,7 @@ module.exports = class extends Command
           //theRow.forEach(cell =>
           for (var cell in theRow)
           {
+            console.log(`cell ${cell}, arg ${arg}`);
             if (cell === arg)
             {
               dupes.forEach(dupe =>
@@ -111,6 +112,7 @@ module.exports = class extends Command
                 anyMatch = true;
                 rowMatches += weight;
               });
+              console.log(`input "${arg}" found in ${rowStr}`);
             }
             else continue;
           }
