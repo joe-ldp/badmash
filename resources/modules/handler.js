@@ -8,7 +8,7 @@ getCover = async(client, ID) =>
   var coverImage;
 
   // Fetch the release ID from the Monstercat API
-  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
+  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${cock}`)
     .then(res => res.json())
     .then(json => (releaseID = json.release.id))
     .then(async() =>
