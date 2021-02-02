@@ -8,7 +8,7 @@ getCover = async(client, ID) =>
   var coverImage;
 
   // Fetch the release ID from the Monstercat API
-  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${cock}`)
+  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
     .then(res => res.json())
     .then(json => (releaseID = json.release.id))
     .then(async() =>
@@ -97,7 +97,7 @@ exports.throw = async (client, message, err) =>
 
   console.log(err.headers);
   
-  process.exit(1);
+  process.exit(err.code);
 }
 
 // Picks a random color from colors.json
