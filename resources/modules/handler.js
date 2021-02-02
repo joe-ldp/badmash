@@ -5,18 +5,22 @@ getCover = async(client, ID) =>
 
   // Embed uses default image (Monstercat logo) if fetching fails
   var defaultImage = "https://i.imgur.com/PoFZk7n.png";
+  var coverImage;
 
   // Fetch the release ID from the Monstercat API
   await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
     .then(res => res.json())
     .then(json => (releaseID = json.release.id))
-    .catch(err => console.error(err));
-
-  console.log(await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`).json());
-
-  // Fetch the cover art URL from AWS
-  const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
-  const coverImage = await coverURL.buffer() ?? defaultImage.buffer();
+    .then(() =>
+    {
+      const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
+      coverImage = await coverURL.buffer();
+    })
+    .catch(err => 
+    {
+      console.error(err);
+      coverImage = defaultImage;
+    });  
 
   const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
 
