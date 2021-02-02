@@ -12,15 +12,14 @@ getCover = async(client, ID) =>
   {
     await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
       .then(res => res.json())
-      .then(json => (releaseID = json.release.id))
-      .catch(err => console.error(err));
+      .then(json => (releaseID = json.release.id));
   
     // Fetch the cover art URL from AWS
     coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
   }
   catch(err)
   {
-    
+
   }
   
   coverImage = await coverURL.buffer();
