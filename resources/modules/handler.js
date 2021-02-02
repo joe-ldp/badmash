@@ -9,7 +9,7 @@ getCover = async(client, ID) =>
 
   // Fetch the release ID from the Monstercat API
   await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
-    //.then(res => res.json())
+    .then(res => res.json())
     .then(json => (releaseID = json.release.id))
     .then(async(res) =>
     {
