@@ -51,9 +51,9 @@ exports.format = async (client, row) =>
   //   default:  embedDesc = `⚠️ Not safe for content creators`; break;
   // }
 
-  var embedDesc = client.licensability[row.CC] ?? client.contentWarning["default"]
+  var embedDesc = (client.licensability[row.CC] ?? client.contentWarning["default"])
                 + "\n"
-                + client.contentWarning[row.E] ?? client.contentWarning["default"]
+                + (client.contentWarning[row.E] ?? client.contentWarning["default"])
                 ;
   
   // Detect explicit content and mark accordingly
