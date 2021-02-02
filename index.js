@@ -1,5 +1,7 @@
 // index.js
 // Initialize dependencies
+require('dotenv').config();
+
 const Discord = require("discord.js");
 const { CommandoClient } = require('discord.js-commando');
 
@@ -9,7 +11,6 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 const handler = require("./resources/modules/handler.js");
-const getRows = require('./resources/modules/rows.js');
 
 const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
@@ -20,9 +21,6 @@ const licensability = require('./resources/objects/licensability.json');
 var google = require('./resources/keys/google.json');
 google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID;
 google.private_key = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
-
-
-// const client = new Discord.Client();
 
 // Initialize the Commando client
 const client = new CommandoClient(
@@ -41,7 +39,6 @@ client.fetch = fetch;
 client.fs = fs;
 
 client.handler = handler;
-client.getRows = getRows;
 
 client.colors = colors;
 client.keyCodes = keyCodes;

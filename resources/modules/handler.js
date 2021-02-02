@@ -1,34 +1,18 @@
 getCover = async(client, ID) =>
 {
-  // Initialize variables for fetching the cover art from the Monstercat API
-  var releaseID;
-
   // Embed uses default image (Monstercat logo) if fetching fails
   let defaultImage = "https://i.imgur.com/PoFZk7n.png";
   var coverImage;
 
-  // Fetch the release ID from the Monstercat API
-  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
-    .then(res => res.json())
-    .then(json => (releaseID = json.release.id))
-    .then(async() =>
-    {
-      const coverRes = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
-      coverImage = await coverRes.buffer();
-    })
-    .catch(err => 
-    {
-      console.error(err);
-      coverImage = defaultImage;
-    });
-
+  // Fetch the cover art from the Monstercat API
   try
   {
     let res = await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`);
-    console.log("------------- RES -------------");
-    console.log(res);
-    console.log("------------- JSON -------------");
-    console.log(await res.json());
+    let json = await res.json();
+    let releaseID = json.release.id;
+
+    let coverRes = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
+    coverImage = await coverRes.buffer();
   }
   catch(err)
   {
@@ -36,9 +20,7 @@ getCover = async(client, ID) =>
     coverImage = defaultImage;
   }
 
-  const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
-
-  return attachment;
+  return new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
 }
 
 // Formatting handler for lookup embed
@@ -61,7 +43,7 @@ exports.format = async (client, row) =>
   embed
     .setColor(color)
     .setTitle(`${row.Track}`)
-    .setDescription(`by **${row.Artists}**\n${embedDesc}`)  
+    .setDescription(`by **${row.Artists}**\n${embedDesc}`)
     .setURL(`https://monstercat.com/release/${row.ID}`)
     
     .addField(`**Genre:**`,            `${row.Label}`)
@@ -80,6 +62,28 @@ exports.format = async (client, row) =>
   
   // Return the formatted embed
   return embed;
+}
+
+exports.getRows = async (client) =>
+{
+    // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
+    const doc = client.doc;
+
+    // Create a connection between the bot and the Google sheet
+    await doc.useServiceAccountAuth(client.google);
+    await doc.loadInfo();
+
+    // Automatically find the Catalog sheet. Yay!
+    var sheetId = 0;
+    doc.sheetsByIndex.forEach(x => {
+        if (x.title == "Catalog") sheetId = x.sheetId;
+    });
+
+    // Get the sheet and an obj array containing its rows
+    const sheet = doc.sheetsById[sheetId];
+    const rows = await sheet.getRows();
+
+    return rows;
 }
 
 // Custom error handling management

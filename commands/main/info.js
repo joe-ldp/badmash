@@ -37,9 +37,7 @@ module.exports = class extends Command
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
     
-    const rows = await this.client.getRows.getRows(this.client);
-
-    console.log(Array.from(rows[0]));
+    const rows = await this.client.handler.getRows(this.client);
 
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
