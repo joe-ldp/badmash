@@ -68,22 +68,13 @@ exports.format = async (client, row) =>
   return embed;
 }
 
-mapGet = (map, key) =>
-{
-  if (map.has(key)) return map.get(key);
-  else return map.get("default");
-}
-
 // Custom error handling management
 exports.throw = async (client, message, err) =>
 {
-  // Error log
   console.error(err);
 
-  // Error notification
   message.channel.send(`The bot has experienced a critical error. Notifying developers and restarting...`);
 
-  // Send error log in bot HQ
   const channel = client.channels.cache.get('725111207337525369');
 
   if (message.channel.type == "dm")
@@ -103,8 +94,9 @@ exports.throw = async (client, message, err) =>
   await channel.send(`Command issued: \`\`\`${message.content}\`\`\``);
   await channel.send(`Error encountered: \`\`\`${err}\`\`\``);
   await console.error(err);
+
+  console.log(err.headers);
   
-  // Reboot
   process.exit(1);
 }
 
