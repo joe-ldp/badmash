@@ -1,4 +1,4 @@
-exports.getCover = async(client, ID) =>
+getCover = async(client, ID) =>
 {
   // Initialize variables for fetching the cover art from the Monstercat API
   var releaseID, imageURL;
@@ -66,29 +66,13 @@ exports.format = async (client, row) =>
   //     embedDesc += `\n⚠️ Possible explicit content`; break;
   // }
 
-  let contentWarning = new Map();
-  contentWarning.set("E", "\n⚠️ Explicit content");
-  contentWarning.set("C", "\n✅ No explicit content");
-  contentWarning.set("I", "\n✅ No explicit content");
-  contentWarning.set("default", "\n⚠️ Possible explicit content");
-
-  let licensability = new Map();
-  licensability.set("Y", "✅ Safe for content creators");
-  licensability.set("default", "⚠️ Not safe for content creators");
-
   var cw;
-  // try 
-  // {
-  //   cw = client.contentWarning.find(obj => obj.symbol.toLowerCase() == row.E.toLowerCase()).text;
-  // }
-  // catch (err)
-  // {
-  //   cw = "\n⚠️ Possible explicit content";
-  // }
 
-  cw = mapGet(contentWarning, row.E);
+  //cw = mapGet(client.contentWarning, row.E);
+
+  cw = client.contentWarning[row.E] ?? client.contentWarning["default"];
   
-  let coverImage = await client.handler.getCover(client, row.ID);
+  let coverImage = await getCover(client, row.ID);
   
   // Build the embed
   embed

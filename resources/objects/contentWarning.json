@@ -1,6 +1,6 @@
-[
-  { "symbol": "E", "text": "\n⚠️ Explicit content" },
-  { "symbol": "C", "text": "\n✅ No explicit content" },
-  { "symbol": "I", "text": "\n✅ No explicit content" },
-  { "symbol": "*", "text": "\n⚠️ Possible explicit content" }
-]
+{
+  "E": "\n⚠️ Explicit content" ,
+  "C": "\n✅ No explicit content",
+  "I": "\n✅ No explicit content",
+  "default": "\n⚠️ Possible explicit content"
+}
