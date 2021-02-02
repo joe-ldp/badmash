@@ -13,6 +13,10 @@ getCover = async(client, ID) =>
     //.then(json => (releaseID = json.release.id))
     .then(async(res) =>
     {
+      console.log(res);
+      console.log(res.json());
+      console.log(json);
+      console.log(json.release.id);
       releaseID = res.json().release.id;
       const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
       coverImage = await coverURL.buffer();
@@ -21,7 +25,7 @@ getCover = async(client, ID) =>
     {
       console.error(err);
       coverImage = defaultImage;
-    });  
+    });
 
   const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
 
