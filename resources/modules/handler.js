@@ -4,17 +4,26 @@ getCover = async(client, ID) =>
   var releaseID;
 
   // Embed uses default image (Monstercat logo) if fetching fails
-  var defaultImage = "https://i.imgur.com/PoFZk7n.png";
+  var coverURL = "https://i.imgur.com/PoFZk7n.png";
+  var coverImage;
 
   // Fetch the release ID from the Monstercat API
-  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
-    .then(res => res.json())
-    .then(json => (releaseID = json.release.id))
-    .catch(err => console.error(err));
-
-  // Fetch the cover art URL from AWS
-  const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
-  const coverImage = await coverURL.buffer() ?? defaultImage;
+  try
+  {
+    await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`)
+      .then(res => res.json())
+      .then(json => (releaseID = json.release.id))
+      .catch(err => console.error(err));
+  
+    // Fetch the cover art URL from AWS
+    coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
+  }
+  catch(err)
+  {
+    
+  }
+  
+  coverImage = await coverURL.buffer();
 
   const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
   console.log(attachment);
@@ -32,7 +41,6 @@ exports.format = async (client, row) =>
   let color = client.colors[row.Label.toLowerCase()] ?? 'b9b9b9';
 
   // Detect content creator availability and content warnings and mark accordingly
-
   let embedDesc = (client.licensability[row.CC] ?? client.licensability["default"])
                 + "\n"
                 + (client.contentWarning[row.E] ?? client.contentWarning["default"]);
