@@ -1,7 +1,7 @@
 getCover = async(client, ID) =>
 {
   // Initialize variables for fetching the cover art from the Monstercat API
-  var releaseID, imageURL;
+  var releaseID;
 
   // Embed uses default image (Monstercat logo) if fetching fails
   var defaultImage = "https://i.imgur.com/PoFZk7n.png";
@@ -12,12 +12,9 @@ getCover = async(client, ID) =>
     .then(json => (releaseID = json.release.id))
     .catch(err => console.error(err));
 
-  console.log(ID);
-  console.log(releaseID);
-
   // Fetch the cover art URL from AWS
   const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
-  const coverImage = await coverURL.buffer();
+  const coverImage = await coverURL.buffer() ?? defaultImage;
 
   const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
   console.log(attachment);
@@ -31,44 +28,14 @@ exports.format = async (client, row) =>
   // Initialize Discord embed
   const embed = new client.Discord.MessageEmbed();
   
-  // Initialize variables
-  var colors = client.colors,
-      genre = row.Label,
-      color = 'b9b9b9';
+  // Find color in colors.json, default (electronic) color if there is no match
+  let color = client.colors[row.Label.toLowerCase()] ?? 'b9b9b9';
 
-  // Cycle through the colors in colors.json to find a match, bot uses default color if there is no match
-  try 
-  { 
-    color = colors.find(obj => obj.genre.toLowerCase() == genre.toLowerCase()).color;
-  } catch (err) { /* Do nothing */ }
-  
-  // Initialize and build the embed description
-  
-  // Detect content creator availability and mark accordingly
-  // switch (row.CC)
-  // {
-  //   case 'Y': embedDesc = `✅ Safe for content creators`; break;
-  //   default:  embedDesc = `⚠️ Not safe for content creators`; break;
-  // }
+  // Detect content creator availability and content warnings and mark accordingly
 
-  var embedDesc = (client.licensability[row.CC] ?? client.licensability["default"])
+  let embedDesc = (client.licensability[row.CC] ?? client.licensability["default"])
                 + "\n"
-                + (client.contentWarning[row.E] ?? client.contentWarning["default"])
-                ;
-  
-  // Detect explicit content and mark accordingly
-  // switch (row.E)
-  // {
-  //   case 'E': // Explicit
-  //     embedDesc += `\n⚠️ Explicit content`; break;
-
-  //   case 'C': // Clean
-  //   case 'I': // Instrumental
-  //     embedDesc += `\n✅ No explicit content`; break;
-
-  //   default: // Other / unknown / unmarked
-  //     embedDesc += `\n⚠️ Possible explicit content`; break;
-  // }
+                + (client.contentWarning[row.E] ?? client.contentWarning["default"]);
   
   let coverImage = await getCover(client, row.ID);
   
