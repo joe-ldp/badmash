@@ -28,7 +28,7 @@ getCover = async(client, ID) =>
     console.log("------------- RES -------------");
     console.log(res);
     console.log("------------- JSON -------------");
-    console.log(res.json());
+    console.log(await res.json());
   }
   catch(err)
   {
