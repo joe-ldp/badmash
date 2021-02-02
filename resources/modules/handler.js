@@ -12,12 +12,13 @@ getCover = async(client, ID) =>
     .then(json => (releaseID = json.release.id))
     .catch(err => console.error(err));
 
+  console.log(await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`));
+
   // Fetch the cover art URL from AWS
   const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
   const coverImage = await coverURL.buffer() ?? defaultImage.buffer();
 
   const attachment = new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
-  console.log(attachment);
 
   return attachment;
 }
