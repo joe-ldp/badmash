@@ -13,7 +13,7 @@ getCover = async(client, ID) =>
     .then(json => (releaseID = json.release.id))
     .then(async() =>
     {
-      const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover`);
+      const coverURL = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
       coverImage = await coverURL.buffer();
     })
     .catch(err => 
