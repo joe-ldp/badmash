@@ -43,7 +43,6 @@ exports.format = async (client, row) =>
   } catch (err) { /* Do nothing */ }
   
   // Initialize and build the embed description
-  var embedDesc;
   
   // Detect content creator availability and mark accordingly
   // switch (row.CC)
@@ -52,8 +51,10 @@ exports.format = async (client, row) =>
   //   default:  embedDesc = `⚠️ Not safe for content creators`; break;
   // }
 
-  embedDesc += client.licensability[row.CC] ?? client.contentWarning["default"];
-  embedDesc += "\n";
+  var embedDesc = client.licensability[row.CC] ?? client.contentWarning["default"]
+                + "\n"
+                + client.contentWarning[row.E] ?? client.contentWarning["default"]
+                ;
   
   // Detect explicit content and mark accordingly
   // switch (row.E)
@@ -68,12 +69,6 @@ exports.format = async (client, row) =>
   //   default: // Other / unknown / unmarked
   //     embedDesc += `\n⚠️ Possible explicit content`; break;
   // }
-
-  var cw;
-
-  //cw = mapGet(client.contentWarning, row.E);
-
-  embedDesc += client.contentWarning[row.E] ?? client.contentWarning["default"];
   
   let coverImage = await getCover(client, row.ID);
   
