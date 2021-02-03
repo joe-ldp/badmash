@@ -93,7 +93,7 @@ exports.throw = async (client, message, err) =>
 
   message.channel.send(`The bot has experienced a critical error. Notifying developers and restarting...`);
 
-  const channel = client.channels.cache.get('725111207337525369');
+  const channel = client.channels.cache.get(process.env.ERROR_CHANNEL);
 
   if (message.channel.type == "dm")
   {
