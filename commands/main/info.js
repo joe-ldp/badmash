@@ -36,86 +36,103 @@ module.exports = class extends Command
     
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
+    
+    const rows = await this.client.handler.getRows(this.client);
 
-    // Create a connection between the bot and the Google sheet
-    const doc = this.client.doc;
-    await doc.useServiceAccountAuth(this.client.google);
-    await doc.loadInfo();
-  
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
     {
-      // Prevent crash from entering empty args
-      if (!args[0])
+      // Prevent crash if user enters empty args
+      if (args.length === 0)
         return message.reply("You entered nothing.");
 
       // --DEBUG-- Log user input
-      // console.log("Lookup initiated: ", args);
+      //console.log("Lookup initiated: ", args);
 
       // Reinitialize inputs as lowercase
       for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
 
       // Initialize required variables for sheet lookup
-      var embed, rowStr, theRow,
-          rowMatches = 0,
+      var embed, theRow,
           anyMatch = false,
           matchCounter = [],
           mergedArgs = args.join(" "), 
           dupes = [ "remix", "remake", "vip", "classical", "mix", "acoustic"];
 
-      // Automatically find the Catalog sheet. Yay!
-      var sheetId;
-      doc.sheetsByIndex.forEach(x => {
-        if (x.title == "Catalog") sheetId = x.sheetId;
-      });
-
-      // Get the sheet and an obj array containing its rows
-      const sheet = doc.sheetsById[sheetId];
-      const rows = await sheet.getRows();
-
       // Iterate through rows...
-      for (var rowNum = 0; rowNum < sheet.rowCount - 1; rowNum++)
+      //console.log(rows);
+      for (var rowNum = 0; rowNum < rows.length - 1; rowNum++)
       {
         // Create a copy of the current row
         theRow = rows[rowNum];
-        var weight = 1;
-        rowMatches = 0;
+        let weight = 1;
+        let rowMatches = 0;
 
-        // Initialize rowStr values (takes desired track info from the sheet row)
-        rowStr = (
+        // Initialize searchFields values (takes desired track info from the sheet row)
+        let searchFields =
+        (
           theRow.ID      + " " +
           theRow.Artists + " " +
           theRow.Track   + " "
-          ).toLowerCase();
+        ).toLowerCase();
 
+        let mergedRow = theRow._rawData.join("|");
+        
         // EPs, albums, and compilations have a lower weight in terms of search accessibility
-        if (theRow.Label.toLowerCase() == "ep" ||
-            theRow.Label.toLowerCase() == "album" ||
-            theRow.Label.toLowerCase() == "compilation")
-        {
-          weight = 0.4;
-        }
+        if (["ep", "album", "compilation"].includes(theRow.Label.toLowerCase())) weight = 0.4;
 
         // Iterate through user args...
-        for (var i = 0; i < args.length; i++)
+        // for (var i = 0; i < args.length; i++)
+        // {
+        //   // ...and check for matches within rows
+        //   if (rowStr.includes(args[i] + " "))
+        //   {
+        //     // Ignore other renditions of a track when uncalled for
+        //     for (var k = 0; k < dupes.length; k++)
+        //     {
+        //       if (rowStr.includes(dupes[k]) && !mergedArgs.includes(dupes[k])) continue;
+        //       anyMatch = true;
+        //       rowMatches += weight;
+        //     }
+        //     // --DEBUG-- Log results
+        //     //console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
+        //   }
+        //   else continue;
+        // }
+        
+        args.forEach(arg =>
         {
-          // ...and check for matches within rows
-          if (rowStr.includes(args[i]))
+          if (searchFields.includes(arg))
           {
-            // Ignore other renditions of a track when uncalled for
-            for (var k = 0; k < dupes.length; k++)
+            dupes.forEach(dupe =>
             {
-              if (rowStr.includes(dupes[k]) && !mergedArgs.includes(dupes[k])) continue;
+              if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
               anyMatch = true;
               rowMatches += weight;
-            }
-            // --DEBUG-- Log results
-            //console.log(`input "${args[i]}" found in row ${x}: ${rowStr}`);
+            });
           }
-          else continue;
-        }
+        });
 
-        if (rowMatches != 0)
+        // args.forEach(arg =>
+        //   {
+        //     //theRow._rawData.forEach(cell =>
+        //     //{
+        //       //if (cell.toLowerCase() === arg)
+        //       //{
+        //       if (searchFields.includes(arg))
+        //       {
+        //         dupes.forEach(dupe =>
+        //         {
+        //           if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
+        //           anyMatch = true;
+        //           rowMatches += weight;
+        //         });
+        //       }
+        //       //}
+        //     //});
+        //   });
+
+        if (rowMatches > 0)
           matchCounter.push({ row: rowNum, matches: rowMatches });
       }
 
@@ -125,7 +142,7 @@ module.exports = class extends Command
         var index = 0;
 
         // --DEBUG-- Weight checking p.1
-        // debug = `Initial selection: ${rows[index].Track}`;
+        //debug = `Initial selection: ${rows[index].Track}`;
 
         // Use latest entry
         for (var i = 0; i < matchCounter.length; i++)
@@ -133,19 +150,20 @@ module.exports = class extends Command
           if (matchCounter[i].matches > matchCounter[index].matches)
           {
             // --DEBUG-- Weight checking p.2
-            // debug += `\nRelease ${rows[i].Artists} - ${rows[i].Track} has a greater weight than ${rows[i].Artists} - ${rows[index].Track}, switching selection`;
+            //debug += `\nRelease ${rows[i].Artists} - ${rows[i].Track} has a greater weight than ${rows[i].Artists} - ${rows[index].Track}, switching selection`;
             index = i;
           }
         }
         // --DEBUG-- Log weight check
-        // console.log(debug);
+        //console.log(debug);
 
         // Reassign best match entry
         theRow = rows[matchCounter[index].row];
 
         // --DEBUG-- Log best match entry
         //console.log(theRow.Track);
-
+        
+        
         // Format acquired data
         embed = await this.client.handler.format(this.client, theRow);
       }

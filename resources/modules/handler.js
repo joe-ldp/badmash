@@ -1,86 +1,49 @@
+getCover = async(client, ID) =>
+{
+  // Embed uses default image (Monstercat logo) if fetching fails
+  let defaultImage = "https://i.imgur.com/PoFZk7n.png";
+  var coverImage;
+
+  // Fetch the cover art from the Monstercat API
+  try
+  {
+    let res = await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`);
+    let json = await res.json();
+    let releaseID = json.release.id;
+
+    let coverRes = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
+    coverImage = await coverRes.buffer();
+  }
+  catch(err)
+  {
+    console.error(err);
+    coverImage = defaultImage;
+  }
+
+  return new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
+}
+
 // Formatting handler for lookup embed
 exports.format = async (client, row) =>
 {
   // Initialize Discord embed
   const embed = new client.Discord.MessageEmbed();
   
-  // Initialize variables
-  var colors = client.colors,
-      genre = row.Label,
-      color = 'b9b9b9';
+  // Find color in colors.json, default (electronic) color if there is no match
+  let color = client.colors[row.Label.toLowerCase()] ?? 'b9b9b9';
 
-  // Cycle through the colors in colors.json to find a match, bot uses default color if there is no match
-  try 
-  { 
-    color = colors.find(obj => obj.genre == genre).color;
-  } catch (err) { /* Do nothing */ }
+  // Detect content creator availability and content warnings and mark accordingly
+  let embedDesc = (client.licensability[row.CC] ?? client.licensability["default"])
+                + "\n"
+                + (client.contentWarning[row.E] ?? client.contentWarning["default"]);
   
-  // Initialize and build the embed description
-  var embedDesc;
-  
-  // Detect content creator availability and mark accordingly
-  switch (row.CC)
-  {
-    case 'Y': embedDesc = `✅ Safe for content creators`; break;
-    default:  embedDesc = `⚠️ Not safe for content creators`; break;
-  }
-  
-  // Detect explicit content and mark accordingly
-  switch (row.E)
-  {
-    case 'E': // Explicit
-      embedDesc += `\n⚠️ Explicit content`; break;
-
-    case 'C': // Clean
-    case 'I': // Instrumental
-      embedDesc += `\n✅ No explicit content`; break;
-
-    default: // Other / unknown / unmarked
-      embedDesc += `\n⚠️ Possible explicit content`; break;
-  }
-
-  // Initialize variables for fetching the cover art of from the Monstercat API
-  var releaseID, imageURL;
-
-  // Embed uses default image (Monstercat logo) if fetching fails
-  var defaultImage = "https://i.imgur.com/PoFZk7n.png";
-
-  // Fetch the release ID from the Monstercat API
-  await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${row.ID}`)
-    .then(res => res.json())
-    .then(json => (releaseID = json.release.id))
-    .catch(err => console.error(err));
-
-  // --DEBUG-- log the track's release ID (not to be confused with the catalog ID)
-  // console.log(releaseID);
-
-  // Fetch the cover art URL from AWS
-  await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=3000`)
-    .then(res => (imageURL = res.url.split("?")[0]))
-    .catch(err => console.error(err));
-
-  // --DEBUG-- Log the fetched image URL
-  // console.log(imageURL);
-
-  // Set the embed thumbnail to the track's cover art, or to the default image if fetching fails
-  
-  if (!releaseID) embed.setThumbnail(`${defaultImage}`);
-  else embed.setThumbnail(`${imageURL}`);
-  
-  // --DEBUG-- Log embed.thumbnail if it exists
-  console.log(embed.thumbnail);
-  
-  // Set the embed thumbnail to the default image, if the bot fails to use the cover art for some fucking reason
-  if (!embed.thumbnail) embed.setThumbnail(`${defaultImage}`);
-  
-  // --DEBUG-- Send a copy of the cover art on Discord
-  // client.channels.cache.get("535282119791083520").send(`${imageURL}`);
+  let coverImage = await getCover(client, row.ID);
   
   // Build the embed
   embed
     .setColor(color)
     .setTitle(`${row.Track}`)
-    .setDescription(`by **${row.Artists}**\n${embedDesc}`)  
+    .setDescription(`by **${row.Artists}**\n${embedDesc}`)
     .setURL(`https://monstercat.com/release/${row.ID}`)
     
     .addField(`**Genre:**`,            `${row.Label}`)
@@ -92,19 +55,44 @@ exports.format = async (client, row) =>
     .addField(`**BPM:**`,              `${row.BPM}`, true)
     .addField(`**Key:**`,              `${row.Key}`, true)
     .addField(`**Length:**`,           `${row.Length}`, true)
+  
+    .attachFiles(coverImage)
+    .setThumbnail('attachment://cover.jpg')
   ;
   
   // Return the formatted embed
   return embed;
 }
 
+exports.getRows = async (client) =>
+{
+    // Redefine the 'doc' (sheet) for easier access, initialize Discord embed
+    const doc = client.doc;
+
+    // Create a connection between the bot and the Google sheet
+    await doc.useServiceAccountAuth(client.google);
+    await doc.loadInfo();
+
+    // Automatically find the Catalog sheet. Yay!
+    var sheetId = 0;
+    doc.sheetsByIndex.forEach(x => {
+        if (x.title == "Catalog") sheetId = x.sheetId;
+    });
+
+    // Get the sheet and an obj array containing its rows
+    const sheet = doc.sheetsById[sheetId];
+    const rows = await sheet.getRows();
+
+    return rows;
+}
+
 // Custom error handling management
 exports.throw = async (client, message, err) =>
 {
-  // Error notification
+  console.error(err);
+
   message.channel.send(`The bot has experienced a critical error. Notifying developers and restarting...`);
 
-  // Send error log in bot HQ
   const channel = client.channels.cache.get('725111207337525369');
 
   if (message.channel.type == "dm")
@@ -124,9 +112,10 @@ exports.throw = async (client, message, err) =>
   await channel.send(`Command issued: \`\`\`${message.content}\`\`\``);
   await channel.send(`Error encountered: \`\`\`${err}\`\`\``);
   await console.error(err);
+
+  console.log(err.headers);
   
-  // Reboot
-  process.exit(1);
+  process.exit(err.code);
 }
 
 // Picks a random color from colors.json

@@ -1,5 +1,7 @@
 // index.js
 // Initialize dependencies
+require('dotenv').config();
+
 const Discord = require("discord.js");
 const { CommandoClient } = require('discord.js-commando');
 
@@ -13,12 +15,12 @@ const handler = require("./resources/modules/handler.js");
 const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
+const contentWarning = require('./resources/objects/contentWarning.json');
+const licensability = require('./resources/objects/licensability.json');
+
 var google = require('./resources/keys/google.json');
 google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID;
 google.private_key = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
-
-
-// const client = new Discord.Client();
 
 // Initialize the Commando client
 const client = new CommandoClient(
@@ -41,6 +43,8 @@ client.handler = handler;
 client.colors = colors;
 client.keyCodes = keyCodes;
 client.genrePrefixes = genrePrefixes;
+client.contentWarning = contentWarning;
+client.licensability = licensability;
 
 // Initialize Google Sheets API
 const doc = new client.gs(process.env.SHEET_KEY);
