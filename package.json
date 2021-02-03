@@ -1,6 +1,6 @@
 {
   "name": "badmash",
-  "version": "1.3.0-alpha",
+  "version": "1.5.0",
   "description": "A Discord bot that fetches data from the MCatalog Google Sheet",
   "main": "index.js",
   "dependencies": {
@@ -27,12 +27,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glae-millen/mcatalog-bot.git"
+    "url": "git+https://github.com/joe-ldp/badmash/.git"
   },
   "author": "glae-millen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/glae-millen/mcatalog-bot/issues"
+    "url": "https://github.com/joe-ldp/badmash//issues"
   },
-  "homepage": "https://github.com/glae-millen/mcatalog-bot"
+  "homepage": "https://github.com/joe-ldp/badmash/"
 }
