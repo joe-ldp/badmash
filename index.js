@@ -1,4 +1,3 @@
-// index.js
 // Initialize dependencies
 require('dotenv').config();
 
@@ -12,7 +11,6 @@ const fs = require('fs');
 
 const handler = require("./resources/modules/handler.js");
 
-const colors = require("./resources/objects/colors.json");
 const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
 const contentWarning = require('./resources/objects/contentWarning.json');
@@ -29,7 +27,6 @@ const client = new CommandoClient(
 	owner: [process.env.OWNER_ID, process.env.CO_ID],
   disableEveryone: true,
 });
-
 // Bind dependencies to client for sub-unit usage
 client.Discord = Discord;
 
@@ -40,7 +37,6 @@ client.fs = fs;
 
 client.handler = handler;
 
-client.colors = colors;
 client.keyCodes = keyCodes;
 client.genrePrefixes = genrePrefixes;
 client.contentWarning = contentWarning;

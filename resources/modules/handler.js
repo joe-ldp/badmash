@@ -86,6 +86,35 @@ exports.getRows = async (client) =>
     return rows;
 }
 
+exports.updateColors = async(client) =>
+{
+  var colorSheetKey = "1Jlk6YdhYkRayveVV-LlGhtPEhHLptbtkbAu-n6JfxSw";
+  var colorSheet = new client.gs(colorSheetKey);
+
+  // Create a connection between the bot and the Google sheet
+  await colorSheet.useServiceAccountAuth(client.google);
+  await colorSheet.loadInfo();
+
+  // Automatically find the Catalog sheet. Yay!
+  var sheetId = 0;
+  colorSheet.sheetsByIndex.forEach(x => {
+      if (x.title == "Genres") sheetId = x.sheetId;
+  });
+
+  // Get the sheet and an obj array containing its rows
+  const colSheet = colorSheet.sheetsById[sheetId];
+  const colRows = await colSheet.getRows();
+
+  var colors = {};
+  colRows.forEach(row =>
+  {
+    //colors.push([row.Genre.toLowerCase(), row.Colour.substring(1)]);
+    colors[row.Genre.toLowerCase()] = row.Colour.substring(1);
+  });
+  
+  client.colors = colors;
+}
+
 // Custom error handling management
 exports.throw = async (client, message, err) =>
 {
