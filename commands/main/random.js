@@ -35,7 +35,7 @@ module.exports = class extends Command
     var startTime = new Date().getTime();
 
     var embed;
-    const rows = await this.client.getRows.getRows(this.client);
+    const rows = await this.client.handler.getRows(this.client);
 
     var track;
   
