@@ -147,10 +147,10 @@ exports.throw = async (client, message, err) =>
   process.exit(err.code);
 }
 
-// Picks a random color from colors.json
+// Picks a random color from colors
 exports.colorize = (client) =>
 {
-  return client.colors[Math.floor(Math.random() * client.colors.length)].color;
+  return Object.keys(client.colors)[Math.floor(Math.random() * client.colors.length)];
 }
 
 exports.processArgs = (argv, keys) =>

@@ -31,7 +31,7 @@ module.exports = class extends Command
             hanabi = this.client.users.cache.get(process.env.OWNER_ID).tag,
             ravalle = this.client.users.cache.get(process.env.CO_ID).tag,
 
-            prefix = this.process.env.prefix,
+            prefix = process.env.prefix,
             embed = new MessageEmbed(),
             
             { commands } = this.client.registry;
