@@ -150,7 +150,8 @@ exports.throw = async (client, message, err) =>
 // Picks a random color from colors
 exports.colorize = (client) =>
 {
-  return Object.keys(client.colors)[Math.floor(Math.random() * client.colors.length)];
+  let vals = Object.values(client.colors);
+  return vals[Math.floor(Math.random() * vals.length)];
 }
 
 exports.processArgs = (argv, keys) =>
