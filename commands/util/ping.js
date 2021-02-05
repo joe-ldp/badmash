@@ -16,7 +16,7 @@ module.exports = class extends Command
         });
     }
   
-    run (message)
+    async run (message)
     {
         try
         {
@@ -35,7 +35,7 @@ module.exports = class extends Command
         catch (err)
         {
             // Inform bot owner for error, send error log, and log it
-            this.client.handler.throw(this.client, message, err);
+            await this.client.handler.throw(this.client, message, err);
         }
     }
 }

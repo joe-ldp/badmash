@@ -37,7 +37,7 @@ module.exports = class extends Command
         }
         catch (err)
         {
-            this.client.handler.throw(this.client, message, err);
+            await this.client.handler.throw(this.client, message, err);
         }
     }
 }

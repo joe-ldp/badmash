@@ -24,7 +24,7 @@ module.exports = class extends Command
         const args = message.content.slice(this.client.commandPrefix).trim().split(/ +/g)[1];
 
         // --DEBUG-- Induce a fake error
-        //if (args == "h") return this.client.handler.throw(this.client, message, args);
+        //if (args == "h") return await this.client.handler.throw(this.client, message, args);
         
         // Initialize args and variables
         const
