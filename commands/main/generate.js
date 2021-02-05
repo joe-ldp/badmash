@@ -108,9 +108,6 @@ module.exports = class extends Command
       var color = 'b9b9b9';
       var colors = this.client.colors;
       
-      
-      this.client.channels.cache.get("535282119791083520").send(`${JSON.stringify(colors)}`);
-
       if (desiredGenre != "*")
       {
         try {
