@@ -60,7 +60,7 @@ module.exports = class extends Command
     }
 
     // Calculate and log the total run time of the function
-    var funcTime = Date.now() - startTime;
+    const funcTime = Date.now() - startTime;
     embed.setFooter(`Retrieved in ${funcTime}ms.`, `${this.client.botAvatar}`);
 
     // Finally send the message
