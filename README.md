@@ -2,7 +2,7 @@
 
 ![alt text](https://cdn.discordapp.com/avatars/574846706647171092/e04f11164774389b05cc2ba42bdab465.webp)
 
-### Badmash is a Discord bot that fetches and displays data from the [MCatalog Google Sheet](https://rebrand.ly/mcatalog).
+### Badmash is a Discord bot that fetches and displays data from the [MCatalog Google Sheet](https://rebrand.ly/mcatalog) and the [Monstercat](https://www.monstercat.com) API.
 
 Commands include:
   
