@@ -1,16 +1,25 @@
-getCover = async(client, ID) =>
+mcatJson = async(client, ID) =>
+{
+  try
+  {
+    let res = await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`);
+    return await res.json();
+  }
+  catch(err)
+  {
+    client.handler.throw(err);
+  }
+}
+
+getCover = async(client, releaseID) =>
 {
   // Embed uses default image (Monstercat logo) if fetching fails
-  let defaultImage = "https://i.imgur.com/PoFZk7n.png";
-  var coverImage;
+  const defaultImage = "https://i.imgur.com/PoFZk7n.png";
+  let coverImage;
 
   // Fetch the cover art from the Monstercat API
   try
   {
-    let res = await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`);
-    let json = await res.json();
-    let releaseID = json.release.id;
-
     let coverRes = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
     coverImage = await coverRes.buffer();
   }
@@ -23,21 +32,41 @@ getCover = async(client, ID) =>
   return new client.Discord.MessageAttachment(coverImage, 'cover.jpg');
 }
 
+creatorFriendly = async(client, tracks, trackNumber = 1) =>
+{
+  try
+  {
+    let track;
+    tracks.forEach(thisTrack => {
+      if (thisTrack.trackNumber == trackNumber) track = thisTrack;
+    });
+
+    //await client.channels.cache.get(process.env.ERROR_CHANNEL).send(`${track.creatorFriendly}`);
+    return track.creatorFriendly;
+  }
+  catch(err)
+  {
+    client.handler.throw(err);
+  }
+}
+
 // Formatting handler for lookup embed
-exports.format = async (client, row) =>
+exports.formatInfo = async (client, row) =>
 {
   // Initialize Discord embed
   const embed = new client.Discord.MessageEmbed();
+  const json = await mcatJson(client, row.ID);
   
   // Find color in colors.json, default (electronic) color if there is no match
   let color = client.colors[row.Label.toLowerCase()] ?? 'b9b9b9';
 
   // Detect content creator availability and content warnings and mark accordingly
-  let embedDesc = (client.licensability[row.CC] ?? client.licensability["default"])
+  const CC = await creatorFriendly(client, json.tracks);
+  const embedDesc = (client.licensability[CC] ?? client.licensability["default"])
                 + "\n"
                 + (client.contentWarning[row.E] ?? client.contentWarning["default"]);
   
-  let coverImage = await getCover(client, row.ID);
+  const coverImage = await getCover(client, json.release.id);
   
   // Build the embed
   embed
@@ -55,7 +84,7 @@ exports.format = async (client, row) =>
     .addField(`**BPM:**`,              `${row.BPM}`, true)
     .addField(`**Key:**`,              `${row.Key}`, true)
     .addField(`**Length:**`,           `${row.Length}`, true)
-  
+      
     .attachFiles(coverImage)
     .setThumbnail('attachment://cover.jpg')
   ;

@@ -160,9 +160,8 @@ module.exports = class extends Command
         // --DEBUG-- Log best match entry
         //console.log(theRow.Track);
         
-        
         // Format acquired data
-        embed = await this.client.handler.format(this.client, theRow);
+        embed = await this.client.handler.formatInfo(this.client, theRow);
       }
       // Sad violin music
       else return message.reply("I cannot find a match for that search entry.");

@@ -50,7 +50,7 @@ module.exports = class extends Command
             track.Label == "compilation"
         );
 
-        embed = await this.client.handler.format(this.client, track);
+        embed = await this.client.handler.formatInfo(this.client, track);
         embed.addField(`**Wait!** Were you choosing songs for a **mashup**?`, `Try using the \`${this.client.commandPrefix}generate\` command!`);
     }
     catch (err)
