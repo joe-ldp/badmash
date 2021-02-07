@@ -31,137 +31,152 @@ module.exports = class extends Command
   async run (message)
   {
     // Capture the time at the start of function execution
-    var startTime = new Date().getTime();
+    let startTime = new Date().getTime();
 
     // Initialize args and variables
-    var args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g).map(v => v.toLowerCase());
+    const embed = new this.client.Discord.MessageEmbed();
+
+    let args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g).map(v => v.toLowerCase());
     args.shift();
 
-    // Set defaults
-    var numTracks = 2,
-        desiredKey = "*",
-        desiredBPM = "*",
-        desiredGenre = "*";
+    const processedArgs = this.client.handler.processArgs(args, ['t', 'k', 'b', 'g']);
 
-    // Process args to determine user settings
-    const keys = ['t', 'k', 'b', 'g'];
-    const processedArgs = this.client.handler.processArgs(args, keys);
+    const numTracks = processedArgs[0] ?? 2,
+          desiredKey = processedArgs[1],
+          desiredBPM = processedArgs[2],
+          
+          keyCodes = this.client.keyCodes,
+          rows = await this.client.handler.getRows(this.client);
+          
+    let desiredGenre = processedArgs[3];
     
-    for (var i = 0; i < processedArgs.length; i++)
-    {
-      if (processedArgs[i] == undefined) continue;
-      else
-      {
-        switch(i)
-        {
-          case 0: numTracks = processedArgs[i]; break;
-          case 1: desiredKey = processedArgs[i]; break;
-          case 2: desiredBPM = processedArgs[i]; break;
-          case 3: desiredGenre = processedArgs[i]; break;
-        }
-      }
-    }
-
-    //message.say(`${processedArgs}`);
-    //message.say(`${numTracks}, ${desiredKey}, ${desiredBPM}, ${desiredGenre}`);
-
-    const embed = new this.client.Discord.MessageEmbed();
-    const keyCodes = this.client.keyCodes;
-
-    const rows = await this.client.handler.getRows(this.client);
-    
-    // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
     {
       // Pick n random releases
-      var tracks = [];
+      let tracks = [];
       for (let i = 0; i < numTracks; i++)
       {
-        tracks.push(pickTrack(rows, desiredBPM, desiredGenre, desiredKey, keyCodes));
+        let desired = tracks[0] ?? { "BPM": desiredBPM, "Key": desiredKey };
+        tracks.push(pickTrack(tracks, rows, desiredGenre, desired.BPM, desired.Key, keyCodes));
       }
 
-      var totBPM = 0, totKey = 0, avgBPM, avgKey, keyDiff;
       // Sort tracks alphabetically
       tracks.sort((a, b) => (a.Artists + " " + a.Track).localeCompare((b.Artists + " " + b.Track)));
 
-      // Sum keys and bpms for averaging
+      // Average key and bpm
+      let totBPM = 0,
+          totKey = 0,
+          avgBPM,
+          avgKey;
+
       tracks.forEach(track =>
       {
-        //message.say(`${track.Label}, ${track.Key}, ${track.BPM}`);
         totBPM += parseInt(track.BPM);
         totKey += getKeyID(track.Key, keyCodes);
       });
-
-      // Calculate average BPM and Key
+      
       avgBPM = Math.round(totBPM / numTracks);
-      avgKey = getKeyFromID(Math.floor(totKey / numTracks), keyCodes);
+      avgKey = getMinKey(Math.floor(totKey / numTracks), keyCodes);
 
+      // Add tracks to embed message
       tracks.forEach(track =>
       {
-        keyDiff = getKeyID(avgKey, keyCodes) - getKeyID(track.Key, keyCodes);
+        let keyDiff = getKeyID(avgKey, keyCodes) - getKeyID(track.Key, keyCodes);
         if (keyDiff >= 0) keyDiff = "+" + keyDiff;
 
         embed.addField(`${track.Artists} - ${track.Track}`, `Key: ${track.Key} (pitch ${keyDiff}), BPM: ${track.BPM}`);
       });
       
       // Initialize variables
-      var color = 'b9b9b9';
-      var colors = this.client.colors;
+      const colors = this.client.colors;
+      let color = getGenreColor(desiredGenre, colors);
       
-      if (desiredGenre != "*")
-      {
-        try {
-          color = getGenreColor(desiredGenre, colors);
-        } catch(err) { }
-      }
-      else
+      if (desiredGenre == undefined)
       {
         color = getGenreColor(tracks[0].Label, colors);
-        for (let i = 1; i < tracks.length; i++)
-        {
-          color = blendColors(color, getGenreColor(tracks[i].Label, colors));
-        }
+        tracks.forEach(track => {
+          color = blendColors(color, getGenreColor(track.Label, colors));
+        });
+
+        // Randomly sort the array so we can get 2 random, but unique, genres
+        tracks.sort(function(){ return Math.random - 0.5 });
+        const first = tracks[0].Label;
+        const second = tracks[1].Label;
+
+        // Pick a random prefix then add halves of the random genres
+        const prefixes = this.client.genrePrefixes;
+        desiredGenre = prefixes[Math.floor(Math.random() * prefixes.length)] + first.slice(0, first.length/2) + second.slice(second.length/2);
       }
+      
+      // Capitalise first letter of each word in desiredGenre
+      desiredGenre = desiredGenre.toLowerCase() .split(' ') .map((s) => s.charAt(0).toUpperCase() + s.substring(1)) .join(' ');
 
-      var mashupGenre = desiredGenre.toLowerCase()
-        .split(' ')
-        .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-        .join(' ');
-
-      if (mashupGenre == "*")
-      {
-        const first = tracks[Math.floor(Math.random() * tracks.length)].Label;
-        const second = tracks[Math.floor(Math.random() * tracks.length)].Label;
-
-        let prefixes = this.client.genrePrefixes;
-        mashupGenre = prefixes[Math.floor(Math.random() * prefixes.length)];
-        mashupGenre += first.slice(0, first.length/2);
-        mashupGenre += second.slice(second.length/2);
-      }
-
-      // Embed formatting
       embed
-      .setTitle(`${message.author.username}'s ${mashupGenre} mashup in ${avgKey}`)
-      .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKey, keyCodes)})\nSuggested BPM: ${avgBPM}\nGenre: ${mashupGenre}`)
-      .setColor(color)
-      ;
+        .setTitle(`${message.author.username}'s ${desiredGenre} mashup in ${avgKey}`)
+        .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKey, keyCodes)})\nSuggested BPM: ${avgBPM}\nGenre: ${desiredGenre}`)
+        .setColor(color);
     }
     catch (err)
     {
-      // Inform bot owner for error, send error log, and log it
       await this.client.handler.throw(this.client, message, err);
     }
 
-    // Get the bot's avatar
-    const botAvatar = this.client.users.cache.get(process.env.BOT_ID).avatarURL();
-
     // Calculate and report the total run time of the function
-    var funcTime = Date.now() - startTime;
-    embed.setFooter(`Retrieved in ${funcTime}ms.`, `${botAvatar}`);
+    const funcTime = Date.now() - startTime;
+    embed.setFooter(`Retrieved in ${funcTime}ms.`, `${this.client.botAvatar}`);
 
     // Finally send the message
-    return message.say(embed).catch(console.error);
+    return message.say(embed);
   }
+}
+
+pickTrack = (tracks, rows, desiredGenre = "*", desiredBPM = "*", desiredKey = "*", keyCodes) =>
+{
+  let track;
+  do
+  {
+    track = rows[Math.floor(Math.random() * rows.length)];
+    //console.log(`Validating track: ${track.Track} with key ${track.Key} and BPM ${track.BPM}`);
+  } while
+    (
+      !validGenre(track.Label, desiredGenre) ||
+      !validBPM(track.BPM, desiredBPM) ||
+      !validKey(track.Key, desiredKey, keyCodes) ||
+      tracks.includes(track)
+    );
+  
+  //console.log(`Settled on track: ${track.Track}. Genre: ${genre}`);
+  return track;
+}
+
+validGenre = (genre, desiredGenre = "*") =>
+{
+  genre = genre.toLowerCase();
+
+  if (["album", "ep", "compilation", "intro", "miscellaneous", "orchestral", "traditional"].includes(genre)) return false;
+
+  return ((desiredGenre == "*") || (genre == desiredGenre.toLowerCase()));
+}
+
+validKey = (key, desiredKey, keyCodes) =>
+{
+  try
+  {
+    let keyID = getKeyID(key, keyCodes);
+    //console.log(`keyID ${keyID} fetched from key ${key}`);
+
+    return ((desiredKey == "*") || (Math.abs(keyID - getKeyID(desiredKey, keyCodes)) < 3));
+  }
+  catch(err) { return false; }
+}
+
+validBPM = (bpm, desiredBPM) =>
+{
+  if (isNaN(bpm)) return false;
+
+  bpm = parseInt(bpm);
+
+  return (desiredBPM == "*" || Math.abs(100 - (100 * bpm / desiredBPM)) <= 11);
 }
 
 getKeyID = (key, keyCodes) =>
@@ -169,176 +184,31 @@ getKeyID = (key, keyCodes) =>
   try
   {
     key = key.toLowerCase();
-
-    var keyID = parseInt(keyCodes.find(obj =>
+    let keyID = parseInt(keyCodes.find(obj =>
       obj.major.toLowerCase() == key || obj.minor.toLowerCase() == key
     ).keyID);
 
-    //console.log(key, keyID);
     return keyID;
   }
-  catch(err)
-  {
-    //console.log(err);
-  }
+  catch(err) { throw err; }
 }
 
-getKeyFromID = (keyID, keyCodes) =>
+getMinKey = (keyID, keyCodes) =>
 {
-  var key = keyCodes.find(obj => obj.keyID == keyID).minor;
-  //console.log(keyID, key);
-  return key;
+  return keyCodes.find(obj => obj.keyID == keyID).minor;
 }
 
 getMajKey = (key, keyCodes) =>
 {
   var keyID = getKeyID(key, keyCodes);
-  var maj = keyCodes.find(obj => obj.keyID == keyID).major;
-  //console.log(keyID, key);
-  return maj;
+  return keyCodes.find(obj => obj.keyID == keyID).major;
 }
 
-pickTrack = (rows, desiredBPM, desiredGenre, desiredKey, keyCodes) =>
-{
-  var track;
-  for (var i = 0; i < rows.length; i++) 
-  {
-    track = rows[Math.floor(Math.random() * rows.length)];
-
-    //console.log(`Validating track: ${track.Track} with key ${track.Key} and BPM ${track.BPM}`);
-
-    if (validTrack(track, desiredBPM, desiredGenre, desiredKey, keyCodes))
-    {
-      //console.log(`Settled on track: ${track.Track}. Genre: ${genre}`);
-      return track;
-    }
-  }
-  
-  //console.log(`Defaulted to track: ${track.Track}. Genre: ${genre}`);
-  return track;
-}
-
-validTrack = (track, desiredBPM, desiredGenre, desiredKey, keyCodes) =>
-{
-  if (
-    validGenre(track.Label, desiredGenre) &&
-    validKey(track.Key, desiredKey, keyCodes) &&
-    validBPM(track.BPM, desiredBPM)
-  )
-  {
-    //console.log("Track validated");
-    return true;
-  }
-  else
-  {
-    //console.log("Track invalidated");
-    return false;
-  }
-}
-
-validGenre = (genre, desiredGenre) =>
-{
-  genre = genre.toLowerCase();
-  if (genre != "album" &&
-      genre != "ep" &&
-      genre != "compilation" &&
-      genre != "intro" &&
-      genre != "miscellaneous" &&
-      genre != "orchestral" &&
-      genre != "traditional")
-  {
-    if (desiredGenre == "*")
-    {
-      return true;
-      //console.log("Valid genre detected");
-    }
-    else if (genre == desiredGenre)
-    {
-      return true;
-      //console.log("Valid genre detected");
-    }
-    else
-    {
-      return false;
-    }
-  }
-  else
-  {
-    return false;
-  }
-}
-
-validKey = (key, desiredKey, keyCodes) =>
-{
-  try
-  {
-    var keyID = getKeyID(key, keyCodes);
-    //console.log(`keyID ${keyID} fetched from key ${key}`);
-
-    //var keyBruh = getKeyFromID(keyID);
-    //console.log(`key ${keyBruh} fetched from keyID ${keyID}`);
-
-    if (desiredKey == "*" || Math.abs(keyID - getKeyID(desiredKey, keyCodes)) < 2)
-    {
-      return true;
-      //console.log(`Valid key detected`);
-    }
-    else
-    {
-      return false;
-      //console.log(`Valid key detected`);
-    }
-  }
-  catch(err)
-  {
-    //console.error(err);
-    //console.log("Invalid key detected");
-    return false;
-  }
-}
-
-validBPM = (bpm, desiredBPM) =>
-{
-  try
-  {
-    //console.log(bpm, typeof bpm, isNaN(bpm));
-    //bpm = parseInt(bpm, 10);
-    //console.log(bpm, typeof bpm, isNaN(bpm));
-    
-
-    if (!isNaN(bpm))
-    {
-      //console.log(Math.abs(100-(100*bpm/desiredBPM)));
-      bpm = parseInt(bpm);
-      if (desiredBPM == "*" || Math.abs(100 - (100 * bpm / desiredBPM)) <= 12)
-      {
-        //console.log("Valid BPM detected");
-        return true;
-      }
-      else
-      {
-        //console.log("Invalid BPM detected");
-        return false;
-      }
-    }
-    else
-    {
-      //console.log("Invalid BPM detected");
-      return false;
-    }
-  }
-  catch(err)
-  {
-    return false;
-  }
-}
-
-getGenreColor = (genre, colors) =>
+getGenreColor = (genre = "*", colors) =>
 {
   return colors[genre.toLowerCase()] ?? 'b9b9b9';
 }
 
-// REPLACE THIS FUNCTION MAYBE
 blendColors = (colorA, colorB, amount = 0.5) =>
 {
   const [rA, gA, bA] = colorA.match(/\w\w/g).map((c) => parseInt(c, 16));
