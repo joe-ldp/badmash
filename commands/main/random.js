@@ -28,9 +28,6 @@ module.exports = class extends Command
     const args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g);
     args.shift();
     
-    // Easy access for the bot avatar
-    const botAvatar = this.client.users.cache.get(process.env.BOT_ID).avatarURL();
-    
     // Capture the time at the start of function execution
     var startTime = new Date().getTime();
 
@@ -64,7 +61,7 @@ module.exports = class extends Command
 
     // Calculate and log the total run time of the function
     var funcTime = Date.now() - startTime;
-    embed.setFooter(`Retrieved in ${funcTime}ms.`, `${botAvatar}`);
+    embed.setFooter(`Retrieved in ${funcTime}ms.`, `${this.client.botAvatar}`);
 
     // Finally send the message
     message.channel.send(embed).catch(console.error);
