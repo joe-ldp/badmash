@@ -1,6 +1,6 @@
 {
   "name": "badmash",
-  "version": "1.5.0",
+  "version": "1.5.3",
   "description": "A Discord bot that fetches data from the MCatalog Google Sheet",
   "main": "index.js",
   "dependencies": {
@@ -26,7 +26,7 @@
   "author": "joe-ldp",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joe-ldp/badmash//issues"
+    "url": "https://github.com/joe-ldp/badmash/issues"
   },
   "homepage": "https://github.com/joe-ldp/badmash/"
 }
