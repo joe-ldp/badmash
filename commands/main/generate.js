@@ -56,7 +56,7 @@ module.exports = class extends Command
       let tracks = [];
       for (let i = 0; i < numTracks; i++)
       {
-        let desired = tracks[0] ?? { "BPM": desiredBPM, "Key": desiredKey };
+        let desired = tracks[0] ?? { "Key": desiredKey };
         tracks.push(pickTrack(tracks, rows, desiredGenre, desired.BPM, desired.Key, keyCodes));
       }
 
