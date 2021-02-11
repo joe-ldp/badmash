@@ -42,13 +42,13 @@ module.exports = class extends Command
     const processedArgs = this.client.handler.processArgs(args, ['t', 'k', 'b', 'g']);
 
     const numTracks = processedArgs[0] ?? 2,
-          desiredKey = processedArgs[1],
-          desiredBPM = processedArgs[2],
           
           keyCodes = this.client.keyCodes,
           rows = await this.client.handler.getRows(this.client);
           
-    let desiredGenre = processedArgs[3];
+    let desiredKey = processedArgs[1],
+        desiredBPM = processedArgs[2],
+        desiredGenre = processedArgs[3];
     
     try
     {
@@ -56,8 +56,11 @@ module.exports = class extends Command
       let tracks = [];
       for (let i = 0; i < numTracks; i++)
       {
-        let desired = tracks[0] ?? { "Key": desiredKey };
-        tracks.push(pickTrack(tracks, rows, desiredGenre, desired.BPM, desired.Key, keyCodes));
+        //let desired = tracks[0] ?? { "BPM": desiredBPM, "Key": desiredKey };
+        let first = tracks[0] ?? { "BPM": undefined, "Key": undefined };
+        desiredKey = first.Key ?? desiredKey;
+        desiredBPM = desiredBPM ?? first.BPM;
+        tracks.push(pickTrack(tracks, rows, desiredGenre, desiredBPM, desiredKey, keyCodes));
       }
 
       // Sort tracks alphabetically
