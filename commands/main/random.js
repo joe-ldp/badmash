@@ -29,12 +29,12 @@ module.exports = class extends Command
     args.shift();
     
     // Capture the time at the start of function execution
-    var startTime = new Date().getTime();
+    const startTime = new Date().getTime();
 
-    var embed;
+    let embed;
     const rows = await this.client.handler.getRows(this.client);
 
-    var track;
+    let track;
   
     // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
     try
@@ -56,7 +56,7 @@ module.exports = class extends Command
     catch (err)
     {
       // Inform bot owner for error, send error log, and log it
-      await this.client.handler.throw(this.client, message, err);
+      await this.client.handler.throw(this.client, err, message);
     }
 
     // Calculate and log the total run time of the function
@@ -64,6 +64,6 @@ module.exports = class extends Command
     embed.setFooter(`Retrieved in ${funcTime}ms.`, `${this.client.botAvatar}`);
 
     // Finally send the message
-    message.channel.send(embed).catch(console.error);
+    message.channel.send(embed);
   }
 }

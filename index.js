@@ -16,8 +16,7 @@ const genrePrefixes = require('./resources/objects/genrePrefixes.json');
 const contentWarning = require('./resources/objects/contentWarning.json');
 const licensability = require('./resources/objects/licensability.json');
 
-
-var google = require('./resources/keys/google.json');
+const google = require('./resources/keys/google.json');
 google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID;
 google.private_key = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
@@ -56,7 +55,7 @@ fs.readdir("./events/", (err, files) =>
   files.forEach(file =>
   {
     const event = require(`./events/${file}`);
-    let eventName = file.split(".")[0];
+    const eventName = file.split(".")[0];
     client.on(eventName, event.bind(null, client));
   });
 });

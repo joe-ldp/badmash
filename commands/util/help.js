@@ -41,7 +41,7 @@ run (message)
         .setDescription(`Badmash: A Discord bot that fetches data from\nhttps://rebrand.ly/mcatalog\n\n**Prefix: ${prefix}**`)
         ;
       
-      var cmdHelp = false;
+      let cmdHelp = false;
       commands.forEach(cmd => 
       {
         // Detect any commands specified
@@ -53,7 +53,7 @@ run (message)
           // Add info to the embed
           embed.addField(`Command: \`${prefix}${cmd.name}\``, `${cmd.description}`);
           
-          var aliases = cmd.aliases.join(', '),
+          let aliases = cmd.aliases.join(', '),
             examples = cmd.examples.join('\n');
 
           embed
@@ -81,7 +81,7 @@ run (message)
     catch (err)
     {
       // Inform bot owner for error, send error log, and log it
-      this.client.handler.throw(this.client, message, err);
+      this.client.handler.throw(this.client, err, message);
     }
   }
 }

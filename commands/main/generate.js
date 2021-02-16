@@ -1,6 +1,4 @@
-// generate.js
 const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
 
 module.exports = class extends Command
 {
@@ -31,13 +29,12 @@ module.exports = class extends Command
   async run (message)
   {
     // Capture the time at the start of function execution
-    let startTime = new Date().getTime();
+    const startTime = new Date().getTime();
 
     // Initialize args and variables
     const embed = new this.client.Discord.MessageEmbed();
 
-    let args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g).map(v => v.toLowerCase());
-    args.shift();
+    const args = message.content.slice(this.client.commandPrefix.length).toLowerCase().trim().split(/ +/g).splice(1);
 
     const processedArgs = this.client.handler.processArgs(args, ['t', 'k', 'b', 'g']);
 
@@ -121,7 +118,7 @@ module.exports = class extends Command
     }
     catch (err)
     {
-      await this.client.handler.throw(this.client, message, err);
+      await this.client.handler.throw(this.client, err, message);
     }
 
     // Calculate and report the total run time of the function
@@ -203,7 +200,7 @@ getMinKey = (keyID, keyCodes) =>
 
 getMajKey = (key, keyCodes) =>
 {
-  var keyID = getKeyID(key, keyCodes);
+  const keyID = getKeyID(key, keyCodes);
   return keyCodes.find(obj => obj.keyID == keyID).major;
 }
 
