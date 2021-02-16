@@ -21,23 +21,20 @@ module.exports = class extends Command
         if (!(message.author.id == process.env.OWNER_ID || message.author.id == process.env.CO_ID))
             return message.reply(`You don't have the permission to use this command.`);
 
-        const args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g);
-        args.shift();
+        const args = message.content.slice(this.client.commandPrefix.length).toLowerCase().trim().split(/ +/g).splice(1);
+
+        if (args.length === 0) return message.reply("You entered nothing.");
 
         try
         {
-            var chl, msg;
+          const chl = this.client.channels.cache.get(args.splice(0, 1).join(""));
+          const msg = args.join(" ");
 
-            chl = this.client.channels.cache.get(args[0]);
-            args.shift();
-
-            msg = args.join(' ');
-
-            await chl.send(`${msg}`).catch(console.error);
+          await chl.send(`${msg}`).catch(console.error);
         }
         catch (err)
         {
-            await this.client.handler.throw(this.client, message, err);
+            await this.client.handler.throw(this.client, err, message);
         }
     }
 }
