@@ -1,182 +1,139 @@
-// lookup.js
 const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
+
 module.exports = class extends Command
 {
-  constructor (client) 
+  constructor (client)
   {
-    super(client, 
-          {
-            name: 'info',
-            group: 'main',
-            memberName: 'info',
-            aliases: ['i', 'lookup'],
-            description: 'Shows information regarding a Monstercat track.',
-            throttling: 
-            {
-              usages: 1,
-              duration: 5
-            },
-            examples: [
-              `${client.commandPrefix}info badmash`,
-              `${client.commandPrefix}info slander potions au5 remix`,
-              `${client.commandPrefix}info uncaged vol 9`
-            ]
-          });
+    super(client,
+    {
+      name: 'info',
+      group: 'main',
+      memberName: 'info',
+      aliases: ['i', 'lookup'],
+      description: 'Shows information regarding a Monstercat track.',
+      throttling:
+      {
+        usages: 1,
+        duration: 5
+      },
+      examples: [
+        `${client.commandPrefix}info badmash`,
+        `${client.commandPrefix}info slander potions au5 remix`,
+        `${client.commandPrefix}info uncaged vol 9`
+      ]
+    });
   }
 
   async run (message)
   {
-    // Initialize args
-    const args = message.content.slice(this.client.commandPrefix.length).trim().split(/ +/g);
-    args.shift();
-        
-    // Capture the time at the start of function execution
-    var startTime = new Date().getTime();
+    const args = message.content.slice(this.client.commandPrefix.length).toLowerCase().trim().split(/ +/g).splice(1);
+    if (args.length === 0) return message.reply("You entered nothing.");
+    
+    const startTime = new Date().getTime();
     
     const rows = await this.client.handler.getRows(this.client);
+    let embed;
 
-    // Big try/catch purely to spam ping Hanabi when you're debugging a crashing issue
-    try
-    {
-      // Prevent crash if user enters empty args
-      if (args.length === 0)
-        return message.reply("You entered nothing.");
-
-      // --DEBUG-- Log user input
-      //console.log("Lookup initiated: ", args);
-
-      // Reinitialize inputs as lowercase
-      for (var i = 0; i < args.length; i++) args[i] = args[i].toLowerCase();
-
-      // Initialize required variables for sheet lookup
-      var embed, theRow,
-          anyMatch = false,
-          matchCounter = [],
-          mergedArgs = args.join(" "), 
-          dupes = [ "remix", "remake", "vip", "classical", "mix", "acoustic"];
-
-      // Iterate through rows...
-      //console.log(rows);
-      for (var rowNum = 0; rowNum < rows.length - 1; rowNum++)
-      {
-        // Create a copy of the current row
-        theRow = rows[rowNum];
-        let weight = 1;
-        let rowMatches = 0;
-
-        // Initialize searchFields values (takes desired track info from the sheet row)
-        let searchFields =
-        (
-          theRow.ID      + " " +
-          theRow.Artists + " " +
-          theRow.Track   + " "
-        ).toLowerCase();
-
-        let mergedRow = theRow._rawData.join("|");
-        
-        // EPs, albums, and compilations have a lower weight in terms of search accessibility
-        if (["ep", "album", "compilation"].includes(theRow.Label.toLowerCase())) weight = 0.4;
-
-        // Iterate through user args...
-        // for (var i = 0; i < args.length; i++)
-        // {
-        //   // ...and check for matches within rows
-        //   if (rowStr.includes(args[i] + " "))
-        //   {
-        //     // Ignore other renditions of a track when uncalled for
-        //     for (var k = 0; k < dupes.length; k++)
-        //     {
-        //       if (rowStr.includes(dupes[k]) && !mergedArgs.includes(dupes[k])) continue;
-        //       anyMatch = true;
-        //       rowMatches += weight;
-        //     }
-        //     // --DEBUG-- Log results
-        //     //console.log(`input "${args[i]}" found in row ${rowNum}: ${rowStr}`);
-        //   }
-        //   else continue;
-        // }
-        
-        args.forEach(arg =>
-        {
-          if (searchFields.includes(arg))
-          {
-            dupes.forEach(dupe =>
-            {
-              if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
-              anyMatch = true;
-              rowMatches += weight;
-            });
-          }
-        });
-
-        // args.forEach(arg =>
-        //   {
-        //     //theRow._rawData.forEach(cell =>
-        //     //{
-        //       //if (cell.toLowerCase() === arg)
-        //       //{
-        //       if (searchFields.includes(arg))
-        //       {
-        //         dupes.forEach(dupe =>
-        //         {
-        //           if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
-        //           anyMatch = true;
-        //           rowMatches += weight;
-        //         });
-        //       }
-        //       //}
-        //     //});
-        //   });
-
-        if (rowMatches > 0)
-          matchCounter.push({ row: rowNum, matches: rowMatches });
-      }
-
-      // Run if there's a match between args and rowStr
-      if (anyMatch)
-      {
-        var index = 0;
-
-        // --DEBUG-- Weight checking p.1
-        //debug = `Initial selection: ${rows[index].Track}`;
-
-        // Use latest entry
-        for (var i = 0; i < matchCounter.length; i++)
-        {
-          if (matchCounter[i].matches > matchCounter[index].matches)
-          {
-            // --DEBUG-- Weight checking p.2
-            //debug += `\nRelease ${rows[i].Artists} - ${rows[i].Track} has a greater weight than ${rows[i].Artists} - ${rows[index].Track}, switching selection`;
-            index = i;
-          }
-        }
-        // --DEBUG-- Log weight check
-        //console.log(debug);
-
-        // Reassign best match entry
-        theRow = rows[matchCounter[index].row];
-
-        // --DEBUG-- Log best match entry
-        //console.log(theRow.Track);
-        
-        // Format acquired data
-        embed = await this.client.handler.formatInfo(this.client, theRow);
-      }
-      // Sad violin music
-      else return message.reply("I cannot find a match for that search entry.");
+    try {
+      const row = search(rows, args);
+      embed = await this.client.handler.formatInfo(this.client, row);
     }
-    catch (err)
-    {
-      // Inform bot owner for error, send error log, and log it
-      await this.client.handler.throw(this.client, message, err);
+    catch (err) {
+      if (err === "no_match") return message.reply("I cannot find a match for that search entry.");
+      else await this.client.handler.throw(this.client, err, message);
     }
 
-    // Calculate and log the total run time of the function
     const funcTime = Date.now() - startTime;
     embed.setFooter(`Retrieved in ${funcTime}ms.`, `${this.client.botAvatar}`);
 
-    // Finally send the message
-    message.channel.send(embed).catch(console.error);
+    message.channel.send(embed);
   }
+}
+
+search = (rows, args) =>
+{
+  let matchCounter = [];
+  const mergedArgs = args.join(" "),
+        dupes = ["remix", "remixes", "remake", "vip", "classical", "mix", "acoustic", "+"],
+        reduceWeight = ["ep", "album", "compilation"];
+  
+
+  for (const [rowNum, row] of rows.entries())
+  {
+    let weight = 1, rowMatches = 0;
+
+    const searchFields = [
+      row.ID, row.Date, row.Label, row.Artists, row.Track, row.Comp, row.Length, row.BPM, row.Key
+    ].map(v => v.toLowerCase()),
+          searchFieldsJoined = searchFields.join(" ");
+
+    if (dupes.some((dupe) => searchFieldsJoined.includes(dupe) && !mergedArgs.includes(dupe))) continue;
+
+    // EPs, albums, and compilations have a lower weight
+    if (reduceWeight.includes(row.Label.toLowerCase())) weight = 0.5;
+
+    args.forEach(arg =>
+    {
+      if (searchFieldsJoined.includes(arg))
+      {
+        dupes.forEach(dupe =>
+        {
+          if (searchFields.includes(dupe) && !mergedArgs.includes(dupe)) return;
+          rowMatches += weight;
+        });
+      }
+    });
+    
+    /*args.forEach(arg => {
+      if (searchFieldsJoined.includes(arg)) {
+        rowMatches += weight;
+      }
+        
+      // for (let i = 0; i < searchFields.length; i++) {
+      //   for (let j = i; j < (searchFields.length - i); j++) {
+      //     let field = "";
+      //     for (let k = j; k < (searchFields.length - k); k++) {
+      //       field += searchFields[k] + " ";
+      //     }
+      //     field = field.trim();
+      //     console.log(field);
+
+      //     if (field === arg) rowMatches += (weight * j);
+      //     if (field === mergedArgs) rowMatches += (weight * j);
+      //   }
+      // }
+
+      // for (let index = 0; index < searchFieldsJoined.split(/ +/g).length; index++) {
+      //   let element = "";
+      //   for (let jindex = index; jindex < searchFieldsJoined.split(/ +/g).length; jindex++) {
+      //     element += searchFieldsJoined.split(/ +/g)[jindex] + " ";
+      //     if (arg === element) rowMatches += weight * 2;
+      //     if (mergedArgs === element) rowMatches += weight * 3;
+      //     console.log(element);
+      //   }
+      // }
+      
+      for (const field of searchFields) {
+        if (arg === field) rowMatches += weight * 2;
+        if (mergedArgs === field) rowMatches += weight * 5;
+        console.log(field);
+      }
+
+      
+    });*/
+
+    if (rowMatches) matchCounter.push({ row: rowNum, matches: rowMatches, name: row.Track });
+  }
+
+  if (matchCounter.length)
+  {
+    let index = 0;
+    for (let i = 0; i < matchCounter.length; i++) {
+      if (matchCounter[i].matches > matchCounter[index].matches) index = i;
+    }
+
+    return rows[matchCounter[index].row];
+  }
+  // Sad violin music
+  else throw "no_match";
 }
