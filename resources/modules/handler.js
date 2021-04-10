@@ -121,7 +121,7 @@ exports.updateColors = async(client) =>
   const colRows = await colSheet.getRows();
 
   let colors = {};
-  colRows.forEach(row => { colors[row.Genre.toLowerCase()] = row.Colour.substring(1); });
+  colRows.forEach(row => { if(row.Genre != undefined && row.Colour != undefined) colors[row.Genre.toLowerCase()] = row.Colour.substring(1); });
   
   client.colors = colors;
 }
