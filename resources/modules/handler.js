@@ -11,7 +11,7 @@ mcatJson = async(client, ID) =>
   }
 }
 
-getCover = async(client, releaseID) =>
+exports.getCover = async(client, releaseID) =>
 {
   const coverRes = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
 
