@@ -27,7 +27,7 @@ google.private_key = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
 const client = new CommandoClient(
 {  
   commandPrefix: process.env.PREFIX,
-  owner: [process.env.OWNER_ID, process.env.CO_ID],
+  owner: OWNER_IDS,
   disableEveryone: true,
 });
 
