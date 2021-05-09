@@ -8,6 +8,7 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
+const dateformat = require('dateformat');
 
 const handler = require("./resources/modules/handler.js");
 
@@ -15,6 +16,8 @@ const keyCodes = require("./resources/objects/keyCodes.json");
 const genrePrefixes = require('./resources/objects/genrePrefixes.json');
 const contentWarning = require('./resources/objects/contentWarning.json');
 const licensability = require('./resources/objects/licensability.json');
+
+const OWNER_IDS = process.env.OWNER_IDS.split(",");
 
 const google = require('./resources/keys/google.json');
 google.private_key_id = process.env.GOOGLE_PRIVATE_KEY_ID;
@@ -35,6 +38,7 @@ client.gs = GoogleSpreadsheet;
 client.google = google;
 client.fetch = fetch;
 client.fs = fs;
+client.dateformat = dateformat;
 
 client.handler = handler;
 
@@ -42,7 +46,7 @@ client.keyCodes = keyCodes;
 client.genrePrefixes = genrePrefixes;
 client.contentWarning = contentWarning;
 client.licensability = licensability;
-
+client.OWNER_IDS = OWNER_IDS;
 
 // Initialize Google Sheets API
 const doc = new client.gs(process.env.SHEET_KEY);

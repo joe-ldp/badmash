@@ -7,12 +7,12 @@ module.exports = class extends Command
   {
     super(client,
     {
-      name: 'licensability',
+      name: 'explicit',
       group: 'admin',
-      memberName: 'licensability',
-      aliases: ['l', 'cc'],
-      description: 'Checks MCatalog licensability column against Monstercat API',
-      examples: [`${client.commandPrefix}licensability`],
+      memberName: 'explicit',
+      aliases: ['e', 'fuckword'],
+      description: 'Checks MCatalog explicit column against Monstercat API',
+      examples: [`${client.commandPrefix}explicit`],
       throttling: 
       {
         usages: 1,
@@ -31,11 +31,11 @@ module.exports = class extends Command
   
     const rows = await this.client.handler.getRows(this.client);
 
-    let mcatCC, catalogCC;
+    let mcatE, catalogE;
     let res, json, tracks, track, percent = 0, lastPercent = 0;
     let mismatches = [];
 
-    const msg = await message.channel.send(`Scanning for CC mismatches... ${percent}% done, ${mismatches.length} detected so far.`);
+    const msg = await message.channel.send(`Scanning for E mismatches... ${percent}% done, ${mismatches.length} detected so far.`);
 
     try
     {
@@ -45,13 +45,13 @@ module.exports = class extends Command
         //const row = rows[rowNum];
         if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent)
         {
-          msg.edit(`Scanning for CC mismatches... ${percent}% done, ${mismatches.length} detected so far.`);
+          msg.edit(`Scanning for E mismatches... ${percent}% done, ${mismatches.length} detected so far.`);
           lastPercent = percent;
         }
 
         if (["ep", "album", "compilation"].includes(row.Label.toLowerCase())) continue;
 
-        catalogCC = row.CC == 'Y';
+        catalogE = row.E == 'E';
         
         try {
           res = await this.client.fetch(`https://connect.monstercat.com/v2/catalog/release/${row.ID}`);
@@ -71,11 +71,11 @@ module.exports = class extends Command
         });
         if (!found) continue;
 
-        mcatCC = track.creatorFriendly;
+        mcatE = track.explicit;
 
-        if (mcatCC != catalogCC) 
+        if (mcatE != catalogE) 
         {
-          mismatches.push({row, catalogCC, mcatCC});
+          mismatches.push({row, catalogE, mcatE});
           //console.error(`MISMATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
         }
         else
@@ -96,7 +96,7 @@ module.exports = class extends Command
 
     mismatches.forEach(async (mm) => {
       embed = new this.client.Discord.MessageEmbed();
-      embed.setTitle(`${mm.row.Artists} - ${mm.row.Track}`).setDescription(`MCatalog CC: ${mm.catalogCC}, MCat CC: ${mm.mcatCC}`);
+      embed.setTitle(`${mm.row.Artists} - ${mm.row.Track}`).setDescription(`MCatalog E: ${mm.catalogE}, MCat E: ${mm.mcatE}`);
       await message.channel.send(embed);
     });
   }

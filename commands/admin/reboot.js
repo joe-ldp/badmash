@@ -18,7 +18,7 @@ module.exports = class extends Command
   async run(message)
   {
     // Prevent third-party usage of administrative commands
-    if (!(message.author.id == process.env.OWNER_ID || message.author.id == process.env.CO_ID))
+    if (!this.client.OWNER_IDS.includes(message.author.id))
       return message.reply(`You don't have the permission to use this command.`);
 
     // Initialize rebooting sequence
