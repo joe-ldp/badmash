@@ -28,16 +28,13 @@ run (message)
       const { commands } = this.client.registry;
       
       const color = this.client.handler.colorize(this.client);
-      
-      const hanabi = this.client.users.cache.get(process.env.OWNER_ID).tag;
-      const ravalle = this.client.users.cache.get(process.env.CO_ID).tag;
 
       // Master embed content
       embed
         .setColor(`${color}`)
         .setTitle(`MCatalog Bot v${process.env.VERSION}`)
         .setThumbnail(`${this.client.botAvatar}`)
-        .setFooter(`Brought to you by ${hanabi} and ${ravalle}.`)
+        .setFooter(`Brought to you by ${this.client.owners[0].tag} and ${this.client.owners[1].tag}.`)
         .setDescription(`Badmash: A Discord bot that fetches data from\nhttps://rebrand.ly/mcatalog\n\n**Prefix: ${prefix}**`)
         ;
       

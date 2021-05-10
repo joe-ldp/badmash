@@ -57,7 +57,7 @@ exports.formatInfo = async (client, row) =>
                 + (client.contentWarning[row.E] ?? client.contentWarning["default"]);
   
   const release = json.name !== 'error' ? json.release : {"id": ""};
-  const coverImage = await getCover(client, release.id);
+  const coverImage = await this.getCover(client, release.id);
   
   // Build the embed
   embed
