@@ -26,7 +26,6 @@ module.exports = class extends Command
 
     const json = await mcatJson(this.client, ID);
     const release = json.release;
-    const links = release.links;
 
     const color = this.client.colors[release.genreSecondary.toLowerCase()] ?? 'b9b9b9';
     
