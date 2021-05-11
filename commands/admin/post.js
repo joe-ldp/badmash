@@ -18,44 +18,46 @@ module.exports = class extends Command
   async run(message)
   {
     // Prevent third-party usage of administrative commands
-    if (!this.client.OWNER_IDS.includes(message.author.id))
+    if (!this.client.OWNER_IDS.includes(message.author.id)) // TO-DO: let any user use the command, but only in a channel they can speak in.
       return message.reply(`You don't have the permission to use this command.`);
 
     const args = message.content.slice(this.client.commandPrefix.length).toUpperCase().trim().split(/ +/g).splice(1);
-    if (args.length != 2) return message.reply("Please enter a release ID and channel ID.");
+    if (args.length < 1) return message.reply("Please enter a release ID and (optional) channel ID.");
 
     const ID = args[0];
-    const postChannel = args[1];
+    const postChannel = args[1] ?? message.channel.id;
 
     // Initialize Discord embed
     const embed = new this.client.Discord.MessageEmbed();
+
     const json = await mcatJson(this.client, ID);
     const release = json.release;
+    const links = release.links;
     
-    // Find color in colors.json, default (electronic) color if there is no match
-    let color = this.client.colors[release.genreSecondary.toLowerCase()] ?? 'b9b9b9';
-  
-    // Detect content creator availability and content warnings and mark accordingly
-    //const CC = await creatorFriendly(this.client, json.tracks ?? [], row.Track);
-    /*const embedDesc = (this.client.licensability[release.explicit] ?? this.client.licensability["default"])
-                  + "\n"
-                  + (this.client.contentWarning[row.E] ?? this.client.contentWarning["default"]);*/
-    
-    //const release = json.name !== 'error' ? json.release : {"id": ""};
+    const color = this.client.colors[release.genreSecondary.toLowerCase()] ?? 'b9b9b9';
+
     const coverImage = await this.client.handler.getCover(this.client, release.id);
 
-    let releaseTypeAddon = release.type == "EP" ? "EP" : release.type == "Album" ? "LP" : "";
+    const releaseTypeAddon = release.type == "EP" ? "EP" : release.type == "Album" ? "LP" : "";
 
-    let d = new Date(Date.parse(release.releaseDate));
-    let releaseDate = this.client.dateformat(d, "ddd dS mmm yyyy");
+    const d = new Date(Date.parse(release.releaseDate));
+    const releaseDate = this.client.dateformat(d, "ddd dS mmm yyyy");
     
     let totalDuration = 0;
     let tracklist = [];
-
     json.tracks.forEach(track => {
-      tracklist.push([`${track.trackNumber}. ${track.artistsTitle} - ${track.title}`, `Genre: **${track.genreSecondary}**, Duration: **${this.timeFormat(track.duration)}**`]);
+      const version = track.version == '' ? '' : `(${track.version})`;
+      tracklist.push([`${track.trackNumber}. ${track.artistsTitle} - ${track.title} ${version}`, `Genre: **${track.genreSecondary}**, Duration: **${this.timeFormat(track.duration)}**`]);
       totalDuration += track.duration;
     });
+
+    let linksText = "";
+    if (Object.entries(links).length > 0) {
+      for (const[linkNo, link] of Object.entries(links)) {
+        linksText += `[${link.platform}](${link.original})\n`;
+      }
+    }
+    
 
     // Build the embed
     embed
@@ -65,17 +67,22 @@ module.exports = class extends Command
       
       .addField(`**Primary Genre:**`, `${release.genreSecondary}`, true)
       .addField(`**Runtime:**`, `${this.timeFormat(totalDuration)}`, true)
-      
       .addField(`**Catalog ID:**`,    `${ID}`, true)
       .addField(`**Release Type:**`,  `${release.type}`, true)
-
-      .addField(`**Release Date:**`,  `${releaseDate}`, false)
+      .addField(`**Release Date:**`,  `${releaseDate}`, true)
 
       .attachFiles(coverImage)
       .setThumbnail('attachment://cover.jpg')
     ;
 
-    tracklist.forEach(track => {
+    if (Object.entries(links).length > 0) {
+      embed.addField(`**Listen on:**`, `${linksText}`);
+    } 
+    else {
+      embed.addField(`**No links available through Monstercat API!**`, `Sorry :(`);
+    }
+
+      tracklist.forEach(track => {
       embed.addField(track[0], track[1]);
     });
 
