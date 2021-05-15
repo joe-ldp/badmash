@@ -40,6 +40,26 @@ creatorFriendly = async(client, tracks, trackTitle) =>
   }
 }
 
+/*explicit = async(client, tracks, trackTitle) =>
+{
+  try
+  {
+    for (const track of tracks)
+    {
+      if (trackTitle.includes(track.title))
+      {
+        return track.explicit;
+      }
+    }
+
+    return -1;
+  }
+  catch(err)
+  {
+    await client.handler.throw(client, err);
+  }
+}*/
+
 // Formatting handler for info/random embed
 exports.formatInfo = async (client, row) =>
 {
@@ -52,9 +72,11 @@ exports.formatInfo = async (client, row) =>
 
   // Detect content creator availability and content warnings and mark accordingly
   const CC = await creatorFriendly(client, json.tracks ?? [], row.Track);
-  const embedDesc = (client.licensability[CC] ?? client.licensability["default"])
-                + "\n"
-                + (client.contentWarning[row.E] ?? client.contentWarning["default"]);
+  //const E = await explicit(client, json.tracks ?? [], row.Track);
+  
+  const embedDesc = (client.licensability[CC] ?? client.licensability["default"]);
+                /*+ "\n"
+                + (client.contentWarning[E] ?? client.contentWarning["default"]);*/
   
   const release = json.name !== 'error' ? json.release : {"id": ""};
   const coverImage = await this.getCover(client, release.id);
