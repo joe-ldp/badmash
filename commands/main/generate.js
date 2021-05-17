@@ -39,7 +39,6 @@ module.exports = class extends Command
     const processedArgs = this.client.handler.processArgs(args, ['t', 'k', 'b', 'g']);
 
     const numTracks = processedArgs[0] ?? 2,
-          
           keyCodes = this.client.keyCodes,
           rows = await this.client.handler.getRows(this.client);
           
@@ -65,9 +64,7 @@ module.exports = class extends Command
 
       // Average key and bpm
       let totBPM = 0,
-          totKey = 0,
-          avgBPM,
-          avgKey;
+          totKey = 0;
 
       tracks.forEach(track =>
       {
@@ -75,13 +72,14 @@ module.exports = class extends Command
         totKey += getKeyID(track.Key, keyCodes);
       });
       
-      avgBPM = Math.round(totBPM / numTracks);
-      avgKey = getMinKey(Math.floor(totKey / numTracks), keyCodes);
+      let avgBPM = Math.round(totBPM / numTracks),
+          avgKeyID = Math.floor(totKey / numTracks);
+      let avgKey = getMinKey(avgKeyID, keyCodes);
 
       // Add tracks to embed message
       tracks.forEach(track =>
       {
-        let keyDiff = getKeyID(avgKey, keyCodes) - getKeyID(track.Key, keyCodes);
+        let keyDiff = avgKeyID - getKeyID(track.Key, keyCodes);
         if (keyDiff >= 0) keyDiff = "+" + keyDiff;
 
         embed.addField(`${track.Artists} - ${track.Track}`, `Key: ${track.Key} (pitch ${keyDiff}), BPM: ${track.BPM}`);
@@ -99,7 +97,7 @@ module.exports = class extends Command
         });
 
         // Randomly sort the array so we can get 2 random, but unique, genres
-        tracks.sort(function(){ return Math.random - 0.5 });
+        tracks.sort(function() { return Math.random - 0.5 });
         const first = tracks[0].Label;
         const second = tracks[1].Label;
 
@@ -113,7 +111,7 @@ module.exports = class extends Command
 
       embed
         .setTitle(`${message.author.username}'s ${desiredGenre} mashup in ${avgKey}`)
-        .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKey, keyCodes)})\nSuggested BPM: ${avgBPM}\nGenre: ${desiredGenre}`)
+        .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKeyID, keyCodes)})\nSuggested BPM: ${avgBPM}\nGenre: ${desiredGenre}`)
         .setColor(color);
     }
     catch (err)
@@ -145,7 +143,7 @@ pickTrack = (tracks, rows, desiredGenre = "*", desiredBPM = "*", desiredKey = "*
       tracks.includes(track)
     );
   
-  //console.log(`Settled on track: ${track.Track}. Genre: ${genre}`);
+  //console.log(`Settled on track: ${track.Track} with key ${track.Key} and BPM ${track.BPM}`);
   return track;
 }
 
@@ -165,7 +163,7 @@ validKey = (key, desiredKey, keyCodes) =>
     let keyID = getKeyID(key, keyCodes);
     //console.log(`keyID ${keyID} fetched from key ${key}`);
 
-    return ((desiredKey == "*") || (Math.abs(keyID - getKeyID(desiredKey, keyCodes)) < 3));
+    return ((desiredKey == "*") || (Math.abs(keyID - getKeyID(desiredKey, keyCodes)) < 2));
   }
   catch(err) { return false; }
 }
@@ -193,14 +191,11 @@ getKeyID = (key, keyCodes) =>
   catch(err) { throw err; }
 }
 
-getMinKey = (keyID, keyCodes) =>
-{
+getMinKey = (keyID, keyCodes) => {
   return keyCodes.find(obj => obj.keyID == keyID).minor;
 }
 
-getMajKey = (key, keyCodes) =>
-{
-  const keyID = getKeyID(key, keyCodes);
+getMajKey = (keyID, keyCodes) => {
   return keyCodes.find(obj => obj.keyID == keyID).major;
 }
 

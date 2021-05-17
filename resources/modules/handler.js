@@ -158,10 +158,10 @@ exports.throw = async (client, err, message) =>
   const errMsg = `The bot has experienced a critical error. Notifying developers and restarting...`;
   if (message === undefined) errChannel.send(`${errMsg}`);
   else message.errChannel.send(`${errMsg}`);
-
+  
   if (message !== undefined)
   {
-    if (message.channel.type == "dm")
+    if (message.channel.type === "dm")
     {
       await errChannel.send(`User ${message.author} experienced an error in **Direct Messages with the bot** at ${message.createdAt}`);
     }
@@ -191,23 +191,22 @@ exports.colorize = (client) =>
 
 exports.processArgs = (argv, keys) =>
 {
-  let currentArg, thisArg, processedArgs = [];
-  
-  for (let i = 0; i < argv.length; i++)
-  {
-    currentArg = argv[i], thisArg = "";
+  let processedArgs = [];
 
-    if (currentArg[0] === '$')
-    {
-      for (let j = i + 1; j < argv.length; j++)
-      {
-        if (argv[j][0] === '$') break;
-        thisArg += argv[j] + " ";
-      }
-
-      if (keys.includes(currentArg.slice(1))) processedArgs.push(thisArg.trim());
+  keys.forEach(key => {
+    const start = argv.indexOf(`$${key}`);
+    if (start === -1) {
+      processedArgs.push(undefined);
     }
-  }
+    else {
+      let thisArg = "";
+      for (let i = start + 1; i < argv.length; i++) {
+        if (argv[i].includes("$")) break;
+        thisArg += argv[i] + " ";
+      }
+      processedArgs.push(thisArg.trim());
+    }
+  });
 
   return processedArgs;
 }
