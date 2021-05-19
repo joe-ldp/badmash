@@ -17,19 +17,26 @@ module.exports = class extends Command
 
   async run(message)
   {
-    // Prevent third-party usage of administrative commands
-    if (!this.client.OWNER_IDS.includes(message.author.id)) // TO-DO: let any user use the command, but only in a channel they can speak in.
-      return message.reply(`You don't have the permission to use this command.`);
-
     const args = message.content.slice(this.client.commandPrefix.length).toUpperCase().trim().split(/ +/g).splice(1);
-    if (args.length < 1) return message.reply("Please enter a release ID and (optional) channel ID.");
+    if (args.length < 1 || args.length > 2) return message.reply("Please enter a release ID and (optional) channel name.");
 
+    const mentionedChannel = message.mentions.channels.first();
+    const postChannel = mentionedChannel || message.channel;
+    if (postChannel === message.channel) {
+      message.delete();
+    }
+    if (args.includes(`#${postChannel.name}`)) {
+      args.splice(args.indexOf(`#${postChannel.name}`), 1);
+    }
+    
+    const hasPermissionInChannel = postChannel.permissionsFor(message.member).has('SEND_MESSAGES', false);
+    if (!hasPermissionInChannel) return message.reply("You don't have permission to send messages in that channel!");
+    
     const ID = args[0];
-    const postChannel = args[1] ?? message.channel.id;
-
-    // Initialize Discord embed
+    
     const embed = new this.client.Discord.MessageEmbed();
-
+    embed.setFooter(`Posted by ${message.author.tag}`);
+    
     const json = await mcatJson(this.client, ID);
     const release = json.release;
     const links = release.links;
@@ -37,7 +44,6 @@ module.exports = class extends Command
     const color = this.client.colors[release.genreSecondary.toLowerCase()] ?? 'b9b9b9';
 
     const coverImage = await this.client.handler.getCover(this.client, release.id);
-
     const releaseTypeAddon = release.type == "EP" ? "EP" : release.type == "Album" ? "LP" : "";
 
     const d = new Date(Date.parse(release.releaseDate));
@@ -88,13 +94,11 @@ module.exports = class extends Command
 
     try
     {
-      const chl = this.client.channels.cache.get(postChannel);
-
-      await chl.send(embed).catch(console.error);
+      await postChannel.send(embed).catch(console.error);
     }
     catch (err)
     {
-        await this.client.handler.throw(this.client, err, message);
+      await this.client.handler.throw(this.client, err, message);
     }
   }
 
