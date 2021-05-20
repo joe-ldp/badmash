@@ -64,7 +64,7 @@ search = (rows, args) =>
 
     const searchFields = [
       row.ID, row.Date, row.Label, row.Artists, row.Track, row.Comp, row.Length, row.BPM, row.Key
-    ].map(v => v.toLowerCase()),
+    ].filter(v => v !== undefined).map(v => v.toLowerCase()),
           searchFieldsJoined = searchFields.join(" ");
 
     if (dupes.some((dupe) => searchFieldsJoined.includes(dupe) && !mergedArgs.includes(dupe))) continue;
