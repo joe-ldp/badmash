@@ -67,7 +67,7 @@ search = (rows, args) =>
     ].filter(v => v !== undefined).map(v => v.toLowerCase()),
           searchFieldsJoined = searchFields.join(" ");
 
-    if (dupes.some((dupe) => searchFieldsJoined.includes(dupe) && !mergedArgs.includes(dupe))) continue;
+    if (dupes.some((dupe) => row.Track.includes(dupe) && !mergedArgs.includes(dupe))) continue;
 
     // EPs, albums, and compilations have a lower weight
     if (reduceWeight.includes(row.Label.toLowerCase())) weight = 0.5;
