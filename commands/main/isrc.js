@@ -29,7 +29,7 @@ module.exports = class extends Command
 
     const color = this.client.colors[release.genreSecondary.toLowerCase()] ?? 'b9b9b9';
     
-    const coverImage = await this.client.handler.getCover(this.client, release.id);
+    const coverImage = await this.client.handler.getCover(this.client, release.CatalogId);
     
     const releaseTypeAddon = release.type == "EP" ? "EP" : release.type == "Album" ? "LP" : "";
 

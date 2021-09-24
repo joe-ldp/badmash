@@ -13,7 +13,7 @@ mcatJson = async(client, ID) =>
 
 exports.getCover = async(client, releaseID) =>
 {
-  const coverRes = await client.fetch(`https://www.monstercat.com/release/${releaseID}/cover?image_width=512`);
+  const coverRes = await client.fetch(`https://www.monstercat.com/release/${releaseID}/cover`);
 
   const coverImage = await (coverRes.ok ? coverRes.url : "https://i.imgur.com/PoFZk7n.png");
 
@@ -26,9 +26,9 @@ creatorFriendly = async(client, tracks, trackTitle) =>
   {
     for (const track of tracks)
     {
-      if (trackTitle.includes(track.title))
+      if (trackTitle.includes(track.Title))
       {
-        return track.creatorFriendly;
+        return track.CreatorFriendly;
       }
     }
 
@@ -46,9 +46,9 @@ creatorFriendly = async(client, tracks, trackTitle) =>
   {
     for (const track of tracks)
     {
-      if (trackTitle.includes(track.title))
+      if (trackTitle.includes(track.Title))
       {
-        return track.explicit;
+        return track.Explicit;
       }
     }
 
@@ -72,14 +72,14 @@ exports.formatInfo = async (client, row) =>
 
   // Detect content creator availability and content warnings and mark accordingly
   const CC = await creatorFriendly(client, json.Tracks ?? [], row.Track);
-  //const E = await explicit(client, json.tracks ?? [], row.Track);
+  //const E = await explicit(client, json.Tracks ?? [], row.Track);
   
   const embedDesc = (client.licensability[CC] ?? client.licensability["default"]);
                 /*+ "\n"
                 + (client.contentWarning[E] ?? client.contentWarning["default"]);*/
   
   const release = json.Name !== 'error' ? json.Release : {"id": ""};
-  const coverImage = await this.getCover(client, release.id);
+  const coverImage = await this.getCover(client, release.CatalogId);
   
   // Build the embed
   embed
