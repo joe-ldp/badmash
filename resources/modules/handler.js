@@ -2,7 +2,7 @@ mcatJson = async(client, ID) =>
 {
   try
   {
-    const res = await client.fetch(`https://connect.monstercat.com/v2/catalog/release/${ID}`);
+    const res = await client.fetch(`https://www.monstercat.com/api/catalog/release/${ID}`);
     return await res.json();
   }
   catch(err)
@@ -13,7 +13,7 @@ mcatJson = async(client, ID) =>
 
 exports.getCover = async(client, releaseID) =>
 {
-  const coverRes = await client.fetch(`https://connect.monstercat.com/v2/release/${releaseID}/cover?image_width=512`);
+  const coverRes = await client.fetch(`https://www.monstercat.com/release/${releaseID}/cover?image_width=512`);
 
   const coverImage = await (coverRes.ok ? coverRes.url : "https://i.imgur.com/PoFZk7n.png");
 
@@ -71,14 +71,14 @@ exports.formatInfo = async (client, row) =>
   let color = client.colors[row.Label.toLowerCase()] ?? 'b9b9b9';
 
   // Detect content creator availability and content warnings and mark accordingly
-  const CC = await creatorFriendly(client, json.tracks ?? [], row.Track);
+  const CC = await creatorFriendly(client, json.Tracks ?? [], row.Track);
   //const E = await explicit(client, json.tracks ?? [], row.Track);
   
   const embedDesc = (client.licensability[CC] ?? client.licensability["default"]);
                 /*+ "\n"
                 + (client.contentWarning[E] ?? client.contentWarning["default"]);*/
   
-  const release = json.name !== 'error' ? json.release : {"id": ""};
+  const release = json.Name !== 'error' ? json.Release : {"id": ""};
   const coverImage = await this.getCover(client, release.id);
   
   // Build the embed
