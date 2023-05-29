@@ -2,6 +2,14 @@ mcatJson = async(client, ID) =>
 {
   try
   {
+    // Releases with new UPC-based catalog numbers fail to fetch by default
+    // This is due to the MCatalog sheet only listing the last 6 digits of the UPC code.
+    // Monstercat's company prefix, 742779, should be prepended before building the URL and fetching the resource.
+
+    // If the ID is a UPC code, prepend the company prefix
+    if (!ID.includes('MC')) {
+      ID = '742779' + ID;
+    }
     const res = await client.fetch(`https://www.monstercat.com/api/catalog/release/${ID}`);
     return await res.json();
   }
