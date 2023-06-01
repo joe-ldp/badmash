@@ -74,6 +74,16 @@ exports.formatInfo = async (client, row) =>
   // Initialize Discord embed
   const embed = new client.Discord.MessageEmbed();
   const json = await mcatJson(client, row.ID);
+
+  let ID = row.ID;
+  // Releases with new UPC-based catalog numbers fail to fetch by default
+  // This is due to the MCatalog sheet only listing the last 6 digits of the UPC code.
+  // Monstercat's company prefix, 742779, should be prepended before building the URL and fetching the resource.
+
+  // If the ID is a UPC code, prepend the company prefix
+  if (!ID.includes('MC')) {
+    ID = '742779' + ID;
+  }
   
   // Find color in colors.json, default (electronic) color if there is no match
   let color = client.colors[row.Label.toLowerCase()] ?? 'b9b9b9';
@@ -94,7 +104,7 @@ exports.formatInfo = async (client, row) =>
     .setColor(color)
     .setTitle(`${row.Track}`)
     .setDescription(`by **${row.Artists}**\n${embedDesc}`)
-    .setURL(`https://monstercat.com/release/${row.ID}`)
+    .setURL(`https://monstercat.com/release/${ID}`)
     
     .addField(`**Genre:**`,            `${row.Label}`)
     
