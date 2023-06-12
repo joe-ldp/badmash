@@ -1,13 +1,12 @@
-// ready.js
-module.exports = (client, ready) =>
-{
-	console.log(`MCatalog Bot v. ${process.env.VERSION} -- Username: ${client.user.username}`);
-  console.log(`Currently serving ${client.guilds.cache.size} servers and ${client.users.cache.size} members`);
-  client.channels.cache.get(process.env.UPTIME_CHANNEL).send(`${client.user.username} is online.`);
-  client.user.setActivity(`rebrand.ly/mcatalog`, {type:"WATCHING"});
-  
-  client.handler.updateColors(client);
-  
-  const botAvatar = client.users.cache.get(process.env.BOT_ID).avatarURL();
-  client.botAvatar = botAvatar;
-}
+require('dotenv').config();
+const { Events, ActivityType } = require('discord.js');
+
+module.exports = {
+	name: Events.ClientReady,
+	once: true,
+	execute(client) {
+		client.user.setActivity('rebrand.ly/mcatalog', { type:ActivityType.Watching });
+		console.log(`Badmash v${process.env.VERSION} ready! Logged in as ${client.user.tag}`);
+		console.log(`Currently serving ${client.guilds.cache.size} guilds and ${client.users.cache.size} users.`);
+	},
+};

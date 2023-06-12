@@ -1,32 +1,21 @@
 {
-  "name": "badmash",
-  "version": "1.5.3",
-  "description": "A Discord bot that fetches data from the MCatalog Google Sheet",
+  "name": "badmash-v2",
+  "version": "1.0.0",
+  "description": "Badmash Rewrite",
   "main": "index.js",
-  "dependencies": {
-    "dateformat": "^4.5.1",
-    "discord.js": "^12.2.0",
-    "discord.js-commando": "git+https://github.com/discordjs/Commando.git",
-    "discordjs-prompter": "^2.0.4",
-    "dotenv": "^8.2.0",
-    "google-spreadsheet": "^3.0.11",
-    "node-fetch": "^2.6.0"
-  },
-  "engines": {
-    "node": "16.x"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joe-ldp/badmash/.git"
+    "test": "test"
   },
   "author": "joe-ldp",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/joe-ldp/badmash/issues"
+  "dependencies": {
+    "@postman/pretty-ms": "^6.1.0",
+    "dateformat": "^5.0.3",
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.1.3",
+    "google-spreadsheet": "^3.3.0"
   },
-  "homepage": "https://github.com/joe-ldp/badmash/"
+  "devDependencies": {
+    "eslint": "^8.42.0"
+  }
 }

@@ -1,0 +1,14 @@
+[
+    { "keyID": "1",  "major": "C maj",    "minor": "A min"  },
+    { "keyID": "2",  "major": "C# maj",   "minor": "A# min" },
+    { "keyID": "3",  "major": "D maj",    "minor": "B min"  },
+    { "keyID": "4",  "major": "D# maj",   "minor": "C min"  },
+    { "keyID": "5",  "major": "E maj",    "minor": "C# min" },
+    { "keyID": "6",  "major": "F maj",    "minor": "D min"  },
+    { "keyID": "7",  "major": "F# maj",   "minor": "D# min" },
+    { "keyID": "8",  "major": "G maj",    "minor": "E min"  },
+    { "keyID": "9",  "major": "G# maj",   "minor": "F min"  },
+    { "keyID": "10", "major": "A maj",    "minor": "F# min" },
+    { "keyID": "11", "major": "A# maj",   "minor": "G min"  },
+    { "keyID": "12", "major": "B maj",    "minor": "G# min" }
+]
