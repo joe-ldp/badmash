@@ -1,42 +1,19 @@
-// ping.js
-const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { genreColour } = require.main.require('./resources/modules/colour.js');
 
-module.exports = class extends Command
-{
-  constructor (client) 
-  {
-    super(client, 
-    {
-      name: 'ping',
-      group: 'util',
-      memberName: 'ping',
-      aliases: ['p'],
-      description: "Shows the bot's response time",
-      examples: [`${client.commandPrefix}ping`]
-    });
-  }
+module.exports = {
+	cooldown: 1,
+	data: new SlashCommandBuilder()
+		.setName('ping')
+		.setDescription('Pong!'),
+	async execute(interaction) {
+		const ping = Date.now() - interaction.createdTimestamp;
+		const colour = genreColour();
 
-  async run (message)
-  {
-    try
-    {
-      // Initalize Discord embed and required variables
-      const embed = new MessageEmbed();
-      const ping = Date.now() - message.createdTimestamp;
-      const color = this.client.handler.colorize(this.client);
+		const embed = new EmbedBuilder()
+			.setColor(colour)
+			.setTitle(`🏓 **Pong!** Ping is __${ping}__ ms.`);
 
-      // Build the embed
-      embed
-        .setColor(`${color}`)
-        .setTitle(`:ping_pong: **Pong!** Ping is __${Math.round(ping)}__ ms.`);
-      
-      return message.channel.send(embed).catch(console.error);
-    }
-    catch (err)
-    {
-      // Inform bot owner for error, send error log, and log it
-      await this.client.handler.throw(this.client, err, message);
-    }
-  }
-}
+		return interaction.reply({ embeds: [embed] });
+	},
+};

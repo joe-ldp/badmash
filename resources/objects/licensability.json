@@ -1,4 +1,4 @@
 {
     "true": "✅ Safe for content creators",
-    "default": "⚠️ Not safe for content creators"
+    "false": "⚠️ Not safe for content creators"
 }
