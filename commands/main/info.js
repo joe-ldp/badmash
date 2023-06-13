@@ -24,7 +24,7 @@ module.exports = {
 
 		try {
 			const row = search(rows, args);
-			embed = await buildEmbed(row, startTime);
+			embed = await buildEmbed(row, startTime, interaction.client.colours);
 		} catch (err) {
 			if (err === 'no_match')
 				return interaction.editReply('I cannot find a match for that search entry.');

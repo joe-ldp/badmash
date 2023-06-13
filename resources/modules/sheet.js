@@ -18,24 +18,5 @@ module.exports = {
         await doc.loadInfo();
         
         return doc.sheetsByTitle['Main Catalog'];
-    },
-
-    getGenreColours: async (google) => {
-        const colorSheetKey = '1Jlk6YdhYkRayveVV-LlGhtPEhHLptbtkbAu-n6JfxSw';
-        const colorSheet = new GoogleSpreadsheet(colorSheetKey);
-
-        await colorSheet.useServiceAccountAuth(google);
-        await colorSheet.loadInfo();
-
-        const colSheet = colorSheet.sheetsByTitle['Genres'];
-        const colRows = await colSheet.getRows();
-
-        let colours = {};
-        colRows.forEach(row => {
-            if(row.Genre != undefined && row.Colour != undefined)
-                colours[row.Genre.toLowerCase()] = row.Colour.substring(1);
-        });
-
-        return colours;
     }
 }

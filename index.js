@@ -5,8 +5,11 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const colours = require('./resources/objects/colours.json');
+client.colours = colours;
 
-const { googleAuth, getMcatalogSheet, getGenreColours } = require('./resources/modules/sheet.js');
+const { googleAuth, getMcatalogSheet } = require('./resources/modules/sheet.js');
+const { updateColours } = require('./resources/modules/colour.js');
 
 googleAuth(client);
 
@@ -14,16 +17,7 @@ const sheetPromise = getMcatalogSheet(client.google);
 sheetPromise.then((sheet) => {
 	client.sheet = sheet;
 	console.log('MCatalog sheet connection ready');
-});
-
-const coloursPromise = getGenreColours(client.google);
-coloursPromise.then((colours) => {
-	const coloursJson = './resources/objects/colours.json';
-	let data = JSON.stringify(colours);
-	fs.writeFile(coloursJson, data, (err) => {
-		if (err) throw err;
-		console.log(`Colours updated and saved to ${coloursJson}`);
-	});
+	updateColours(client);
 });
 
 client.cooldowns = new Collection();

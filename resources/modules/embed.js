@@ -1,10 +1,9 @@
 const { EmbedBuilder } = require('discord.js');
 const { releaseURL, coverURL, fetchJSON, creatorFriendly } = require.main.require('./resources/modules/monstercat.js');
 const licensability = require.main.require('./resources/objects/licensability.json');
-const colours = require.main.require('./resources/objects/colours.json');
 
 module.exports = {
-    buildEmbed: async (row, startTime) => {
+    buildEmbed: async (row, startTime, colours) => {
         const releaseJSON = await fetchJSON(row.ID);
         const colour = colours[row.Label.toLowerCase()] ?? 'b9b9b9';
         const CC = await creatorFriendly(releaseJSON, row.Track);

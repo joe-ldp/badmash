@@ -30,7 +30,7 @@ module.exports = {
             );
     
             // embed.addField(`**Wait!** Were you choosing songs for a **mashup**?`, `Try using the \`${this.client.commandPrefix}generate\` command!`);
-			embed = await buildEmbed(track, startTime);
+			embed = await buildEmbed(track, startTime, interaction.client.colours);
 		} catch (err) {
             interaction.editReply('An unexpected error occurred.');
             throw(err);
