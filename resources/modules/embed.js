@@ -8,13 +8,18 @@ module.exports = {
         const colour = colours[row.Label.toLowerCase()] ?? 'b9b9b9';
         const CC = await creatorFriendly(releaseJSON, row.Track);
         const funcTime = Date.now() - startTime;
-        // const artistURL = 'https://google.com';
+        let primaryArtist, artistURL = undefined;
+        try {
+            primaryArtist = releaseJSON.Release.Artists.find(a => a.ArtistNumber == 1);
+            artistURL = `https://monstercat.com/artist/${primaryArtist.URI}`;
+        } catch (e) {
+            // maybe log this?
+        }
     
         const embed = new EmbedBuilder()
             .setColor(colour)
             .setTitle(`${row.Track}`)
             .setURL(releaseURL(row.ID))
-            .setAuthor({ name: `${row.Artists}` })//, url: `${artistURL}`})
             .setDescription(`${licensability[CC]}`)
             .setThumbnail(coverURL(row.ID))
             .addFields({
@@ -47,6 +52,12 @@ module.exports = {
                 inline: true
             })
             .setFooter({text: `Retrieved in ${funcTime}ms.`});
+
+        if (artistURL) {
+            embed.setAuthor({ name: `${row.Artists}`, url: `${artistURL}`})
+        } else {
+            embed.setAuthor({ name: `${row.Artists}`});
+        }
     
         return embed;
     }
