@@ -4,7 +4,7 @@ module.exports = {
     * @param {string} id - The release ID to be formatted
     * @returns {string} - The formatted release ID
     */
-    releaseID(id) {
+    getReleaseID(id) {
         // Releases with new UPC-based catalog numbers fail to fetch by default
         // This is due to the MCatalog sheet only listing the last 6 digits of the UPC code.
         // Monstercat's company prefix, 742779, should be prepended before building the URL and fetching the resource.
@@ -20,8 +20,8 @@ module.exports = {
     * @param {string} id - The release ID
     * @returns {string} - The release URL
     */
-    releaseURL: (id) => {
-        return `https://monstercat.com/release/${module.exports.releaseID(id)}`;
+    getReleaseURL: (id) => {
+        return `https://monstercat.com/release/${module.exports.getReleaseID(id)}`;
     },
 
     /*
@@ -29,8 +29,8 @@ module.exports = {
     * @param {string} id - The release ID
     * @returns {string} - The cover art URL
     */
-    coverURL: (id) => {
-        return `${module.exports.releaseURL(id)}/cover`;
+    getCoverURL: (id) => {
+        return `${module.exports.getReleaseURL(id)}/cover`;
     },
 
     /*
@@ -39,7 +39,7 @@ module.exports = {
     * @returns {object} - The API JSON
     */
     fetchJSON: async (id) => {
-        const url = `https://www.monstercat.com/api/catalog/release/${module.exports.releaseID(id)}`;
+        const url = `https://www.monstercat.com/api/catalog/release/${module.exports.getReleaseID(id)}`;
         const response = await fetch(url);
         return await response.json();
     },
@@ -50,7 +50,7 @@ module.exports = {
     * @param {string} trackName - The track name
     * @returns {bool} - The creator-friendly-ness`
     */
-    creatorFriendly: (json, trackName) => {
+    getCreatorFriendly: (json, trackName) => {
         const tracks = json.Tracks ?? [];
         const track = tracks.find(t => t.Title == trackName);
         try {
@@ -59,5 +59,65 @@ module.exports = {
             // maybe log this?
             return false;
         }
+    },
+
+    /*
+    * Returns the ISRC for a track
+    * @param {object} json - The Monstercat API release JSON
+    * @param {string} trackName - The track name
+    * @returns {string} - The ISRC
+    * @throws {string} - If the track is not found
+    * @throws {string} - If the track does not have an ISRC
+    */
+    getISRC: (json, trackName) => {
+        const tracks = json.Tracks ?? [];
+        const track = tracks.find(t => t.Title == trackName);
+        if (!track) throw 'track_not_found';
+        if (!track.ISRC) throw 'track_no_isrc';
+        return track.ISRC;
+    },
+
+    /*
+    * Returns the brand a track was released on
+    * @param {object} json - The Monstercat API release JSON
+    * @param {string} trackName - The track name
+    * @returns {string} - The brand
+    * @throws {string} - If the track is not found
+    * @throws {string} - If the track does not have a brand
+    */
+    getBrand: (json, trackName) => {
+        const tracks = json.Tracks ?? [];
+        const track = tracks.find(t => t.Title == trackName);
+        if (!track) throw 'track_not_found';
+        if (!track.Brand) throw 'track_no_brand';
+        return track.Brand;
+    },
+
+    /*
+    * Returns the GRid for a release
+    * @param {object} json - The Monstercat API release JSON
+    * @returns {string} - The GRid
+    * @throws {string} - If the release is not found
+    * @throws {string} - If the release does not have a GRid
+    */
+    getGRid: (json) => {
+        if (!json.Release.GRid) throw 'release_no_grid';
+        return json.Release.GRid;
+    },
+
+    /*
+    * Returns the track number for a track
+    * @param {object} json - The Monstercat API release JSON
+    * @param {string} trackName - The track name
+    * @returns {string} - The track number
+    * @throws {string} - If the track is not found
+    * @throws {string} - If the track does not have a track number
+    */
+    getTrackNumber: (json, trackName) => {
+        const tracks = json.Tracks ?? [];
+        const track = tracks.find(t => t.Title == trackName);
+        if (!track) throw 'track_not_found';
+        if (!track.TrackNumber) throw 'track_no_track_number';
+        return track.TrackNumber;
     }
 }

@@ -9,9 +9,14 @@ module.exports = {
 		.addStringOption(option =>
 			option.setName('track')
 			.setDescription('The track to get information about.')
-			.setRequired(true)),
+			.setRequired(true))
+		.addBooleanOption(option =>
+			option.setName('verbose')
+			.setDescription('Show extra information (including ISRC, etc.) about the track.')
+			.setRequired(false)),
 	async execute(interaction) {
-		const args = interaction.options.getString('track').toLowerCase().trim().split(/ +/g);
+		const searchArgs = interaction.options.getString('track').toLowerCase().trim().split(/ +/g);
+		const verbose = interaction.options.getBoolean('verbose') ?? false;
 		const startTime = Date.now();
 		
 		if (!interaction.client.sheet)
@@ -23,8 +28,8 @@ module.exports = {
 		let embed;
 
 		try {
-			const row = search(rows, args);
-			embed = await buildEmbed(row, startTime, interaction.client.colours);
+			const row = search(rows, searchArgs);
+			embed = await buildEmbed(row, startTime, interaction.client.colours, verbose);
 		} catch (err) {
 			if (err === 'no_match')
 				return interaction.editReply('I cannot find a match for that search entry.');

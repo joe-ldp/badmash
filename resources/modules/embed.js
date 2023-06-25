@@ -1,12 +1,12 @@
 const { EmbedBuilder } = require('discord.js');
-const { releaseURL, coverURL, fetchJSON, creatorFriendly } = require.main.require('./resources/modules/monstercat.js');
+const mcat = require.main.require('./resources/modules/monstercat.js');
 const licensability = require.main.require('./resources/objects/licensability.json');
 
 module.exports = {
-    buildEmbed: async (row, startTime, colours) => {
-        const releaseJSON = await fetchJSON(row.ID);
+    buildEmbed: async (row, startTime, colours, verbose = false) => {
+        const releaseJSON = await mcat.fetchJSON(row.ID);
         const colour = colours[row.Label.toLowerCase()] ?? 'b9b9b9';
-        const CC = await creatorFriendly(releaseJSON, row.Track);
+        const CC = await mcat.getCreatorFriendly(releaseJSON, row.Track);
         const funcTime = Date.now() - startTime;
         let primaryArtist, artistURL = undefined;
         try {
@@ -19,9 +19,9 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(colour)
             .setTitle(`${row.Track}`)
-            .setURL(releaseURL(row.ID))
+            .setURL(mcat.getReleaseURL(row.ID))
             .setDescription(`${licensability[CC]}`)
-            .setThumbnail(coverURL(row.ID))
+            .setThumbnail(mcat.getCoverURL(row.ID))
             .addFields({
                 name: '**Genre:**',
                 value: `${row.Label}`,
@@ -57,6 +57,17 @@ module.exports = {
             embed.setAuthor({ name: `${row.Artists}`, url: `${artistURL}`})
         } else {
             embed.setAuthor({ name: `${row.Artists}`});
+        }
+
+        if (verbose) {
+            embed.
+                addFields(
+                    { name: 'Brand', value: mcat.getBrand(releaseJSON, row.Track), inline: true },
+                    { name: 'UPC', value: mcat.getReleaseID(row.ID), inline: true },
+                    { name: 'Track \#', value: mcat.getTrackNumber(releaseJSON, row.Track).toString(), inline: true},
+                    { name: 'ISRC', value: mcat.getISRC(releaseJSON, row.Track), inline: false },
+                    { name: 'GRid', value: mcat.getGRid(releaseJSON), inline: false },
+                );
         }
     
         return embed;
