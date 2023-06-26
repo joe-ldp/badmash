@@ -5,8 +5,12 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const colours = require('./resources/objects/colours.json');
-client.colours = colours;
+
+const coloursJsonPath = './resources/objects/colours.json';
+if (!fs.existsSync(coloursJsonPath)) {
+	fs.writeFileSync(coloursJsonPath, JSON.stringify({}));
+}
+client.colours = require(coloursJsonPath);
 
 const { googleAuth, getMcatalogSheet } = require('./resources/modules/sheet.js');
 const { updateColours } = require('./resources/modules/colour.js');
