@@ -6,11 +6,17 @@ const { Client, Collection, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-const coloursJsonPath = './resources/objects/colours.json';
-if (!fs.existsSync(coloursJsonPath)) {
-	fs.writeFileSync(coloursJsonPath, JSON.stringify({}));
+const coloursJson = './resources/objects/colours.json';
+if (!fs.existsSync(coloursJson)) {
+	fs.writeFileSync(coloursJson, JSON.stringify({}));
 }
-client.colours = require(coloursJsonPath);
+client.colours = require(coloursJson);
+
+const genresJson = './resources/objects/genres.json';
+if (!fs.existsSync(genresJson)) {
+	fs.writeFileSync(genresJson, JSON.stringify([]));
+}
+client.genres = require(genresJson);
 
 const { googleAuth, getMcatalogSheet } = require('./resources/modules/sheet.js');
 const { updateColours } = require('./resources/modules/colour.js');

@@ -1,8 +1,10 @@
 const fs = require('node:fs');
+const coloursJson = './resources/objects/colours.json';
+const genresJson = './resources/objects/genres.json';
 
 module.exports = {
     genreColour: (genre = 'random') => {
-        const colours = require.main.require('./resources/objects/colours.json');
+        const colours = require.main.require(coloursJson);
         if (genre.toLowerCase() == 'random') {
             let colourVals = Object.keys(colours);
             return colours[colourVals[Math.floor(Math.random() * colourVals.length)]];
@@ -30,13 +32,18 @@ module.exports = {
             }
         }
 
-        // Update currently loaded colours object (without this, bot would need rebooting again)
+        // Update currently loaded genres and colours objects (without this, bot would need rebooting again)
         client.colours = colours;
+        client.genres = foundGenres;
 
-        // Save as json too
-        const coloursJson = './resources/objects/colours.json';
-        let data = JSON.stringify(colours);
-        fs.writeFile(coloursJson, data, (err) => {
+        // Save genres json
+        fs.writeFile(genresJson, JSON.stringify(foundGenres), (err) => {
+            if (err) throw err;
+            console.log(`Genres updated and saved to ${genresJson}`);
+        });
+
+        // Save colours json
+        fs.writeFile(coloursJson, JSON.stringify(colours), (err) => {
             if (err) throw err;
             console.log(`Colours updated and saved to ${coloursJson}`);
         });
