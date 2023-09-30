@@ -41,7 +41,7 @@ module.exports = {
             { name: 'G min (Bb maj)',  value: '11' },
             { name: 'G# min (B maj)',  value: '12' }, )),
     async execute(interaction) {
-        interaction.deferReply();
+        await interaction.deferReply();
         const startTime = new Date().getTime();
 
         const embed = new EmbedBuilder();
