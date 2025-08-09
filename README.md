@@ -27,4 +27,4 @@ Suggests tracks for a mashup based on user criteria (# of tracks, Key, BPM, Genr
 
 Maintained and updated by [joe-ldp](https://github.com/joe-ldp)
 
-Originally created by [glae-millen](https://github.com/glae-millen)
+Originally created by [hibifier](https://github.com/hibifier)
