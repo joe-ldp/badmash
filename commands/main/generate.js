@@ -51,7 +51,7 @@ module.exports = {
             desiredBPM = interaction.options.getNumber('bpm') ?? '*',
             desiredKey = interaction.options.getString('key') ?? '*';
 
-        if (!interaction.client.genres.includes(desiredGenre))
+        if (!interaction.client.genres.includes(desiredGenre) && desiredGenre != "*")
             return interaction.editReply(`\`${desiredGenre}\` is not a valid genre. Please specify a genre listed on the [MCatalog sheet](<https://docs.google.com/spreadsheets/d/116LycNEkWChmHmDK2HM2WV85fO3p3YTYDATpAthL8_g/edit#gid=21513865>).`);
 
         const rows = await interaction.client.sheet.getRows();
