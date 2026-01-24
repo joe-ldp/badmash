@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { genreColour } = require('../../resources/modules/colour');
-const keyCodes = require.main.require('./resources/objects/keyCodes.json');
+const { pickTrack } = require.main.require('./resources/modules/pickTrack.js');
+const { genreColour, blendColors } = require.main.require('./resources/modules/colour.js');
+const { getKeyID, getMinKey, getMajKey } = require.main.require('./resources/modules/key.js');
 
 module.exports = {
     cooldown: 10,
@@ -125,78 +126,3 @@ module.exports = {
     },
 };
 
-pickTrack = (tracks, rows, desiredGenre = '*', desiredBPM = '*', desiredKey = '*') => {
-    let track;
-    do {
-        track = rows[Math.floor(Math.random() * rows.length)];
-        // console.info(`Validating track: ${track.Track} with genre ${track.Label}, key ${track.Key} and BPM ${track.BPM}`);
-        // console.info(`Validating genre ${track.Label}: ${validGenre(track.Label, desiredGenre)}`);
-        // console.info(`Validating BPM ${track.BPM}: ${validBPM(track.BPM, desiredBPM)}`);
-        // console.info(`Validating key ${track.Key}: ${validKey(track.Key, desiredKey)}`);
-    } while (
-        !validGenre(track.Label, desiredGenre) ||
-        !validBPM(track.BPM, desiredBPM) ||
-        !validKey(track.Key, desiredKey) ||
-        tracks.includes(track)
-    );
-
-    // console.log(`Settled on track: ${track.Track} with key ${track.Key} and BPM ${track.BPM}`);
-    return track;
-}
-
-validGenre = (genre, desiredGenre = '*') => {
-    genre = genre.toLowerCase();
-    if (['album', 'ep', 'compilation', 'intro', 'miscellaneous', 'orchestral', 'traditional'].includes(genre))
-        return false;
-
-    return ((desiredGenre == '*') || (genre == desiredGenre.toLowerCase()));
-}
-
-validKey = (key, desiredKey) => {
-    try {
-        let keyID = getKeyID(key);
-        return ((desiredKey == '*') || (Math.abs(keyID - getKeyID(desiredKey)) < 2));
-    } catch (err) {
-        return false;
-    }
-}
-
-validBPM = (bpm, desiredBPM) => {
-    if (isNaN(bpm))
-        return false;
-
-    bpm = parseInt(bpm);
-    return (desiredBPM == '*' || Math.abs(100 - (100 * bpm / desiredBPM)) <= 11);
-}
-
-getKeyID = (key) => {
-    try {
-        key = key.toLowerCase();
-        let keyID = parseInt(keyCodes.find(obj =>
-            obj.major.toLowerCase() == key || obj.minor.toLowerCase() == key
-        ).keyID);
-
-        return keyID;
-    } catch (err) {
-        throw err;
-    }
-}
-
-getMinKey = (keyID) => {
-    return keyCodes.find(obj => obj.keyID == keyID).minor;
-}
-
-getMajKey = (keyID) => {
-    return keyCodes.find(obj => obj.keyID == keyID).major;
-}
-
-blendColors = (colorA, colorB, amount = 0.5) => {
-    const [rA, gA, bA] = colorA.match(/\w\w/g).map((c) => parseInt(c, 16));
-    const [rB, gB, bB] = colorB.match(/\w\w/g).map((c) => parseInt(c, 16));
-
-    const r = Math.round(rA + (rB - rA) * amount).toString(16).padStart(2, '0');
-    const g = Math.round(gA + (gB - gA) * amount).toString(16).padStart(2, '0');
-    const b = Math.round(bA + (bB - bA) * amount).toString(16).padStart(2, '0');
-
-    return '#' + r + g + b;
-}
