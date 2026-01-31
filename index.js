@@ -21,7 +21,7 @@ client.genres = require(genresJson);
 const { googleAuth, getMcatalogSheet } = require('./resources/modules/sheet.js');
 const { updateColours } = require('./resources/modules/colour.js');
 
-googleAuth(client);
+client.google = googleAuth();
 
 getMcatalogSheet(client.google).then((sheet) => {
 	client.sheet = sheet;
