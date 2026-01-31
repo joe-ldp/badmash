@@ -23,8 +23,7 @@ const { updateColours } = require('./resources/modules/colour.js');
 
 googleAuth(client);
 
-const sheetPromise = getMcatalogSheet(client.google);
-sheetPromise.then((sheet) => {
+getMcatalogSheet(client.google).then((sheet) => {
 	client.sheet = sheet;
 	console.log('MCatalog sheet connection ready');
 	updateColours(client);
