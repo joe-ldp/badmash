@@ -11,9 +11,9 @@ googleAuth = () => {
     return google;
 }
 
-getMcatalogSheet = async (google) => {
+getMcatalogSheet = async () => {
     const doc = new GoogleSpreadsheet(process.env.SHEET_KEY);
-    await doc.useServiceAccountAuth(google);
+    await doc.useServiceAccountAuth(googleAuth());
     await doc.loadInfo();
     
     return doc.sheetsByTitle['Main Catalog'];
