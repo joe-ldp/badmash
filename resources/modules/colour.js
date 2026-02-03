@@ -17,7 +17,7 @@ module.exports = {
         let foundGenres = [],
             colours = {};
 
-		await client.sheet.loadCells();
+        await sheet.loadCells(`E:F`);
 
         for (let i = 3; i < sheet.rowCount; i++) {
             let cell = sheet.getCellByA1(`F${i}`);
