@@ -13,16 +13,16 @@ module.exports = {
         }
     },
 
-    updateColours: async (client) => {
+    updateColours: async (client, sheet) => {
         let foundGenres = [],
             colours = {};
 
 		await client.sheet.loadCells();
 
-        for (let i = 3; i < client.sheet.rowCount; i++) {
-            let cell = client.sheet.getCellByA1(`F${i}`);
+        for (let i = 3; i < sheet.rowCount; i++) {
+            let cell = sheet.getCellByA1(`F${i}`);
             if (cell.value) {
-                let genre = client.sheet.getCellByA1(`E${i}`).value.toLowerCase();
+                let genre = sheet.getCellByA1(`E${i}`).value.toLowerCase();
                 if (!foundGenres.includes(genre)) {
                     foundGenres.push(genre);
                     // effectiveFormat is used because the MCatalog's colours are based on conditional formatting

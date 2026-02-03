@@ -3,6 +3,7 @@ require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { initSheet } = require.main.require('./resources/modules/sheet.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -18,16 +19,7 @@ if (!fs.existsSync(genresJson)) {
 }
 client.genres = require(genresJson);
 
-const { googleAuth, getMcatalogSheet } = require('./resources/modules/sheet.js');
-const { updateColours } = require('./resources/modules/colour.js');
-
-client.google = googleAuth();
-
-getMcatalogSheet(client.google).then((sheet) => {
-	client.sheet = sheet;
-	console.log('MCatalog sheet connection ready');
-	updateColours(client);
-});
+initSheet(client);
 
 client.cooldowns = new Collection();
 

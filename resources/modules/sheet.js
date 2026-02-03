@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { updateColours } = require.main.require('./resources/modules/colour.js');
 
 googleAuth = () => {
     const google = require.main.require('./resources/keys/google.json');
@@ -19,7 +20,31 @@ getMcatalogSheet = async () => {
     return doc.sheetsByTitle['Main Catalog'];
 }
 
+initSheet = async (client) => {
+    getMcatalogSheet().then((sheet) => {
+        this.sheet = sheet;
+        refreshRows();
+        updateColours(client, sheet);
+    });
+
+    setInterval(async () => {
+        refreshRows();
+    }, 10 * 60 * 1000); // 10 minutes - minutes * seconds * milliseconds
+}
+
+refreshRows = async () => {
+    if (this.sheet) {
+        this.rows = await this.sheet.getRows();
+        this.rows.fetchedAt = new Date();
+        console.log('Sheet data refreshed');
+    }
+}
+
+getRows = () => {
+    return this.rows;
+}
+
 module.exports = {
-    googleAuth,
-    getMcatalogSheet,
+    initSheet,
+    getRows
 }

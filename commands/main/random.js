@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { buildEmbed } = require.main.require('./resources/modules/embed.js');
+const { getRows } = require.main.require('./resources/modules/sheet.js');
 require.main.require('./resources/modules/monstercat.js');
 
 module.exports = {
@@ -9,13 +10,11 @@ module.exports = {
 		.setDescription('Shows information about a random Monstercat track.'),
 	async execute(interaction) {
 		const startTime = Date.now();
+		const rows = getRows();
 		
-		if (!interaction.client.sheet)
-			return interaction.reply('The Google sheets connection is not yet loaded. Please try again in a moment. If this message persists, contact the bot owner(s).');
-		else
-			interaction.deferReply();
+		if (!rows)
+			return interaction.reply('The catalog is not yet loaded. Please try again in a moment. If this message persists, contact the bot owner(s).');
 		
-		const rows = await interaction.client.sheet.getRows();
 		let embed;
 
 		try {
@@ -32,10 +31,10 @@ module.exports = {
             // embed.addField(`**Wait!** Were you choosing songs for a **mashup**?`, `Try using the \`${this.client.commandPrefix}generate\` command!`);
 			embed = await buildEmbed(track, startTime, interaction.client.colours);
 		} catch (err) {
-            interaction.editReply('An unexpected error occurred.');
+            interaction.reply('An unexpected error occurred.');
             throw(err);
 		}
 
-		return interaction.editReply({ embeds: [embed] });
+		return interaction.reply({ embeds: [embed] });
 	},
 };
