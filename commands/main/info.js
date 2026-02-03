@@ -19,12 +19,11 @@ module.exports = {
 		const verbose = interaction.options.getBoolean('verbose') ?? false;
 		const startTime = Date.now();
 		
-		if (!interaction.client.sheet)
-			return interaction.reply('The Google sheets connection is not yet loaded. Please try again in a moment. If this message persists, contact the bot owner(s).');
-		else
-			interaction.deferReply();
+		const rows = getRows();
 		
-		const rows = await interaction.client.sheet.getRows();
+		if (!rows)
+			return interaction.reply('The catalog is not yet loaded. Please try again in a moment. If this message persists, contact the bot owner(s).');
+		
 		let embed;
 
 		try {
@@ -32,14 +31,14 @@ module.exports = {
 			embed = await buildEmbed(row, startTime, interaction.client.colours, verbose);
 		} catch (err) {
 			if (err === 'no_match')
-				return interaction.editReply('I cannot find a match for that search entry.');
+				return interaction.reply('I cannot find a match for that search entry.');
 			else {
-				interaction.editReply('An unexpected error occurred.');
+				interaction.reply('An unexpected error occurred.');
 				throw(err);
 			}
 		}
 
-		return interaction.editReply({ embeds: [embed] });
+		return interaction.reply({ embeds: [embed] });
 	},
 };
 
