@@ -25,6 +25,6 @@ Suggests tracks for a mashup based on user criteria (# of tracks, Key, BPM, Genr
 ![image](https://github.com/joe-ldp/badmash/assets/67245465/2f6b246f-2e1e-437e-b6a8-6e5d15ac634f)
 
 
-Maintained and updated by [joe-ldp](https://github.com/joe-ldp)
+Maintained and updated by [joe-ldp](https://github.com/joe-ldp) since Feb 2021
 
-Originally created by [hibifier](https://github.com/hibifier)
+Originally created by [hibifier](https://github.com/hibifier) in May 2019
