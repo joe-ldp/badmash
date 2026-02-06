@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { pickTrack } = require.main.require('./resources/modules/pickTrack.js');
 const { genreColour, blendColors } = require.main.require('./resources/modules/colour.js');
 const { getKeyID, getMinKey, getMajKey } = require.main.require('./resources/modules/key.js');
+const { getRows } = require.main.require('./resources/modules/sheet.js');
 
 module.exports = {
     cooldown: 10,
@@ -55,7 +56,7 @@ module.exports = {
         if (!interaction.client.genres.includes(desiredGenre) && desiredGenre != "*")
             return interaction.editReply(`\`${desiredGenre}\` is not a valid genre. Please specify a genre listed on the [MCatalog sheet](<https://docs.google.com/spreadsheets/d/116LycNEkWChmHmDK2HM2WV85fO3p3YTYDATpAthL8_g/edit#gid=21513865>).`);
 
-        const rows = await interaction.client.sheet.getRows();
+        const rows = await getRows();
 
         try {
             // Pick n random releases
