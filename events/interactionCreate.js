@@ -33,6 +33,10 @@ module.exports = {
             }
         }
 
+        if (command.ownerOnly && !ownerIDs.includes(interaction.user.id)) {
+            return interaction.reply({ content: `You don't have permission to use this command.`, ephemeral: true });
+        }
+
         timestamps.set(interaction.user.id, now);
         setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
