@@ -44,7 +44,7 @@ module.exports = {
             { name: 'G# min (B maj)',  value: '12' }, )),
     async execute(interaction) {
         await interaction.deferReply();
-        const startTime = new Date().getTime();
+        const startTime = interaction.createdAt;
 
         const embed = new EmbedBuilder();
 

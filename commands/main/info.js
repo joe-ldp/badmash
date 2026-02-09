@@ -17,7 +17,7 @@ module.exports = {
 	async execute(interaction) {
 		const searchArgs = interaction.options.getString('track').toLowerCase().trim().split(/ +/g);
 		const verbose = interaction.options.getBoolean('verbose') ?? false;
-		const startTime = Date.now();
+		const startTime = interaction.createdAt;
 		
 		const rows = getRows();
 		

@@ -9,7 +9,7 @@ module.exports = {
 		.setName('random')
 		.setDescription('Shows information about a random Monstercat track.'),
 	async execute(interaction) {
-		const startTime = Date.now();
+		const startTime = interaction.createdAt;
 		const rows = getRows();
 		
 		if (!rows)
