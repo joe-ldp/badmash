@@ -17,19 +17,22 @@ module.exports = {
         if (!rows)
             return interaction.reply('The catalog is not yet loaded. Please try again in a moment. If this message persists, contact the bot owner(s).');
         else
-            sentMessage = await interaction.reply(`Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bro idfk yet chill`);
+            sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
 
         let mcatCC, catalogCC;
         let res, tracks, track, percent = 0, lastPercent = 0;
         let mismatches = [];
         let funcTime;
+        let messageChannel = await interaction.client.channels.fetch(interaction.channelId);
+        let messageID = sentMessage.id;
 
         try {
             for (const [rowNum, row] of rows.entries()) {
                 if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) {
                     funcTime = Date.now() - startTime;
                     let timeLeft = (funcTime / rowNum) * (rows.length - rowNum) / 1000;
-                    sentMessage.edit(`Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches.length} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
+                    if (percent == 100) timeLeft = 0;
+                    messageChannel.messages.edit(messageID, `Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches.length} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
                     lastPercent = percent;
                 }
 
