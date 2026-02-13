@@ -83,8 +83,8 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setTitle(`${mm.row.Artists} - ${mm.row.Track}`)
                 .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${mcatCC}`)
-                .setColor(genreColour(mm.row.Genre));
             await interaction.channel.send({ embeds: [embed] });
+                .setColor(genreColour(mm.row.Label));
         });
     },
 };
