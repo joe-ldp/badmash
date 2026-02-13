@@ -81,7 +81,7 @@ module.exports = {
 
         mismatches.forEach(async (mm) => {
             const embed = new EmbedBuilder()
-                .setTitle(`${row.Artists} - ${row.Track}`)
+                .setTitle(`${mm.row.Artists} - ${mm.row.Track}`)
                 .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${mcatCC}`)
                 .setColor(genreColour(mm.row.Genre));
             await interaction.channel.send({ embeds: [embed] });
