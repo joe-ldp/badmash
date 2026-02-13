@@ -27,6 +27,12 @@ module.exports = {
         let messageChannel = await interaction.client.channels.fetch(interaction.channelId);
         let messageID = sentMessage.id;
 
+        const thread = await messageChannel.threads.create({
+            name: `CC Mismatches - ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}`,
+            reason: 'Thread for licensability mismatches found by the licensability command.',
+        });
+        thread.members.add(interaction.user.id);
+
         try {
             for (const [rowNum, row] of rows.entries()) {
                 if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) {
@@ -83,8 +89,9 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setTitle(`${mm.row.Artists} - ${mm.row.Track}`)
                 .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${mcatCC}`)
-            await interaction.channel.send({ embeds: [embed] });
                 .setColor(genreColour(mm.row.Label));
+            await thread.send({ embeds: [embed] });
         });
+        await messageChannel.messages.fetch(messageID).reply(`Scan complete! Found ${mismatches.length} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
     },
 };
