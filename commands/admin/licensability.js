@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
 const { getRows } = require.main.require('./resources/modules/sheet.js');
 const { timeFormat } = require.main.require('./resources/modules/util.js');
 const { fetchJSON } = require.main.require('./resources/modules/monstercat.js');
+const { genreColour } = require.main.require('./resources/modules/colour.js');
 
 module.exports = {
     ownerOnly: true,
@@ -65,7 +66,7 @@ module.exports = {
 
                 if (mcatCC != catalogCC) {
                     mismatches.push({ row, catalogCC, mcatCC });
-                    console.error(`MISMATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
+                    //console.error(`MISMATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
                 }
                 else {
                     // console.log(`MATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
@@ -79,9 +80,11 @@ module.exports = {
         funcTime = Date.now() - startTime;
 
         mismatches.forEach(async (mm) => {
-            // let embed = new EmbedBuilder()
-            // embed.setTitle(`${mm.row.Artists} - ${mm.row.Track}`).setDescription(`MCatalog CC: ${mm.catalogCC}, MCat CC: ${mm.mcatCC}`);
-            // await interaction.channel.send(embed);
+            const embed = new EmbedBuilder()
+                .setTitle(`${row.Artists} - ${row.Track}`)
+                .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${mcatCC}`)
+                .setColor(genreColour(mm.row.Genre));
+            await interaction.channel.send({ embeds: [embed] });
             console.log(`${mm.row.Artists} - ${mm.row.Track}`) | (`MCatalog CC: ${mm.catalogCC}, MCat CC: ${mm.mcatCC}`);
         });
     },
