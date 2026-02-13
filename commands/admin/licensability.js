@@ -19,7 +19,7 @@ module.exports = {
         
         let sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
 
-        let tracks, percent = 0, lastPercent = 0, mismatches = [];
+        let tracks, percent = 0, lastPercent = 0, mismatches = 0;
         const messageChannel = await interaction.client.channels.fetch(interaction.channelId);
         const messageID = sentMessage.id;
 
@@ -36,7 +36,7 @@ module.exports = {
                     let funcTime = Date.now() - startTime;
                     let timeLeft = (funcTime / rowNum) * (rows.length - rowNum) / 1000;
                     if (percent == 100) timeLeft = 0;
-                    messageChannel.messages.edit(messageID, `Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches.length} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
+                    messageChannel.messages.edit(messageID, `Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
                     lastPercent = percent;
                 }
 
@@ -50,6 +50,7 @@ module.exports = {
                         creatorFriendly: t.CreatorFriendly
                     }));
                 } catch (err) {
+                    mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
                         .setDescription(`Failed to fetch release data from Monstercat API. Either it's not on the player or the ID is wrong on MCatalog.`)
@@ -62,6 +63,7 @@ module.exports = {
 
                 let catalogCC = row.CC == 'Y';
                 if (track && (track.creatorFriendly != catalogCC)) {
+                    mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
                         .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${track.creatorFriendly}`)
@@ -75,6 +77,6 @@ module.exports = {
         }
 
         funcTime = Date.now() - startTime;
-        await messageChannel.messages.fetch(messageID).reply(`Scan complete! Found ${mismatches.length} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
+        await messageChannel.messages.fetch(messageID).reply(`Scan complete! Found ${mismatches} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
     },
 };
