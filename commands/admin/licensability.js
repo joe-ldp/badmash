@@ -13,19 +13,15 @@ module.exports = {
     async execute(interaction) {
         const startTime = interaction.createdAt;
         const rows = getRows();
-        let sentMessage;
 
         if (!rows)
             return interaction.reply('The catalog is not yet loaded. Please try again in a moment. If this message persists, contact the bot owner(s).');
-        else
-            sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
+        
+        let sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
 
-        let mcatCC, catalogCC;
-        let res, tracks, track, percent = 0, lastPercent = 0;
-        let mismatches = [];
-        let funcTime;
-        let messageChannel = await interaction.client.channels.fetch(interaction.channelId);
-        let messageID = sentMessage.id;
+        let tracks, percent = 0, lastPercent = 0, mismatches = [];
+        const messageChannel = await interaction.client.channels.fetch(interaction.channelId);
+        const messageID = sentMessage.id;
 
         const thread = await messageChannel.threads.create({
             name: `CC Mismatches - ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}`,
@@ -37,7 +33,7 @@ module.exports = {
             for (const [rowNum, row] of rows.entries()) {
                 if (rowNum == 0) continue;
                 if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) {
-                    funcTime = Date.now() - startTime;
+                    let funcTime = Date.now() - startTime;
                     let timeLeft = (funcTime / rowNum) * (rows.length - rowNum) / 1000;
                     if (percent == 100) timeLeft = 0;
                     messageChannel.messages.edit(messageID, `Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches.length} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
@@ -45,40 +41,32 @@ module.exports = {
                 }
 
                 if (["ep", "album", "compilation"].includes(row.Label.toLowerCase())) continue;
-
-                catalogCC = row.CC == 'Y';
-
+                
                 try {
-                    res = await fetchJSON(row.ID);
+                    let res = await fetchJSON(row.ID);
                     if (!res.Tracks) throw "o no";
                     tracks = res.Tracks.map(t => ({
                         title: t.Title,
                         creatorFriendly: t.CreatorFriendly
                     }));
                 } catch (err) {
-                    console.error(`Failed to fetch MCat data for ${row.ID} (${row.Track}): ${err}`);
+                    const embed = new EmbedBuilder()
+                        .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
+                        .setDescription(`Failed to fetch release data from Monstercat API. Either it's not on the player or the ID is wrong on MCatalog.`)
+                        .setColor(genreColour(row.Label));
+                    thread.send({ embeds: [embed] });
                     continue;
                 }
+                
+                let track = tracks.find(t => row.Track.includes(t.title));
 
-                let found = false;
-                tracks.forEach(thisTrack => {
-                    if (row.Track.includes(thisTrack.title)) {
-                        found = true;
-                        track = thisTrack;
-                    }
-                });
-                if (!found) continue;
-
-                if (track.creatorFriendly != catalogCC) {
+                let catalogCC = row.CC == 'Y';
+                if (track && (track.creatorFriendly != catalogCC)) {
                     const embed = new EmbedBuilder()
-                        .setTitle(`${row.Artists} - ${row.Track}`)
+                        .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
                         .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${track.creatorFriendly}`)
                         .setColor(genreColour(row.Label));
                     thread.send({ embeds: [embed] });
-                    //console.error(`MISMATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
-                }
-                else {
-                    // console.log(`MATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
                 }
             }
         }
