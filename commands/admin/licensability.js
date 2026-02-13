@@ -85,7 +85,6 @@ module.exports = {
                 .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${mcatCC}`)
                 .setColor(genreColour(mm.row.Genre));
             await interaction.channel.send({ embeds: [embed] });
-            console.log(`${mm.row.Artists} - ${mm.row.Track}`) | (`MCatalog CC: ${mm.catalogCC}, MCat CC: ${mm.mcatCC}`);
         });
     },
 };
