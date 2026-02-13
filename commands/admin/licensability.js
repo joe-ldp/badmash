@@ -69,10 +69,12 @@ module.exports = {
                 });
                 if (!found) continue;
 
-                mcatCC = track.creatorFriendly;
-
-                if (mcatCC != catalogCC) {
-                    mismatches.push({ row, catalogCC, mcatCC });
+                if (track.creatorFriendly != catalogCC) {
+                    const embed = new EmbedBuilder()
+                        .setTitle(`${row.Artists} - ${row.Track}`)
+                        .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${track.creatorFriendly}`)
+                        .setColor(genreColour(row.Label));
+                    thread.send({ embeds: [embed] });
                     //console.error(`MISMATCH: ${row.Track}: Catalog CC: ${catalogCC}, MCat CC: ${mcatCC}`);
                 }
                 else {
@@ -85,14 +87,6 @@ module.exports = {
         }
 
         funcTime = Date.now() - startTime;
-
-        mismatches.forEach(async (mm) => {
-            const embed = new EmbedBuilder()
-                .setTitle(`${mm.row.Artists} - ${mm.row.Track}`)
-                .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${mcatCC}`)
-                .setColor(genreColour(mm.row.Label));
-            await thread.send({ embeds: [embed] });
-        });
         await messageChannel.messages.fetch(messageID).reply(`Scan complete! Found ${mismatches.length} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
     },
 };
