@@ -64,7 +64,7 @@ module.exports = {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
-                        .setDescription(`Failed to fetch release data from Monstercat API. Either it's not on the player or the ID is wrong on MCatalog.`)
+                        .setDescription(`Failed to fetch release data from Monstercat API. Either it's not on the API (https://www.monstercat.com/api/catalog/release/<ID>) or the ID is wrong on MCatalog.`)
                         .setColor(genreColour(row.Label));
                     thread.send({ embeds: [embed] });
                     continue;
