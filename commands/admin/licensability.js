@@ -70,7 +70,7 @@ module.exports = {
                     continue;
                 }
                 
-                let track = tracks.find(t => row.Track.includes(t.title));
+                let track = tracks.find(t => row.Track == t.title);
 
                 let catalogCC = row.CC == 'Y';
                 if (track && (track.creatorFriendly != catalogCC)) {
