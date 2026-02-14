@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getRows } = require.main.require('./resources/modules/sheet.js');
 const { timeFormat } = require.main.require('./resources/modules/util.js');
-const { fetchJSON } = require.main.require('./resources/modules/monstercat.js');
 const { genreColour } = require.main.require('./resources/modules/colour.js');
+const { fetchJSON, getReleaseID } = require.main.require('./resources/modules/monstercat.js');
 
 module.exports = {
     ownerOnly: true,
@@ -19,6 +19,7 @@ module.exports = {
         
         let sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
 
+        let jsonCache = [], cacheHits = 0, cacheMisses = 0;
         let tracks, percent = 0, lastPercent = 0, mismatches = 0;
         const messageChannel = await interaction.client.channels.fetch(interaction.channelId);
         const messageID = sentMessage.id;
@@ -43,9 +44,19 @@ module.exports = {
                 if (["ep", "album", "compilation"].includes(row.Label.toLowerCase())) continue;
                 
                 try {
-                    let res = await fetchJSON(row.ID);
-                    if (!res.Tracks) throw "o no";
-                    tracks = res.Tracks.map(t => ({
+                    let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID));
+                    if (!json) {
+                        cacheMisses++;
+                        json = await fetchJSON(row.ID);
+                        if (json.Tracks.length > 1) {
+                            jsonCache = [json].concat(jsonCache);
+                            if (jsonCache.length > 50) jsonCache.pop();
+                        }
+                    } else {
+                        cacheHits++;
+                    }
+                    if (!json.Tracks) throw "o no";
+                    tracks = json.Tracks.map(t => ({
                         title: t.Title,
                         creatorFriendly: t.CreatorFriendly
                     }));
@@ -78,5 +89,6 @@ module.exports = {
 
         funcTime = Date.now() - startTime;
         (await messageChannel.messages.fetch(messageID)).reply(`Scan complete! Found ${mismatches} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
+        console.log(`${cacheHits} cache hits, ${cacheMisses} cache misses.`);
     },
 };
