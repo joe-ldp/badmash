@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getRows } = require.main.require('./resources/modules/sheet.js');
 const { timeFormat } = require.main.require('./resources/modules/util.js');
 const { fetchJSON } = require.main.require('./resources/modules/monstercat.js');
