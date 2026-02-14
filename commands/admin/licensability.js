@@ -31,7 +31,7 @@ module.exports = {
 
         try {
             for (const [rowNum, row] of rows.entries()) {
-                if (rowNum == 0) continue;
+                if (rowNum < 3) continue;
                 if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) {
                     let funcTime = Date.now() - startTime;
                     let timeLeft = (funcTime / rowNum) * (rows.length - rowNum) / 1000;
