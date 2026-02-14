@@ -77,6 +77,6 @@ module.exports = {
         }
 
         funcTime = Date.now() - startTime;
-        await messageChannel.messages.fetch(messageID).reply(`Scan complete! Found ${mismatches} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
+        (await messageChannel.messages.fetch(messageID)).reply(`Scan complete! Found ${mismatches} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
     },
 };
