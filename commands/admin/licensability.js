@@ -24,7 +24,7 @@ module.exports = {
         const messageID = sentMessage.id;
 
         const thread = await messageChannel.threads.create({
-            name: `CC Mismatches - ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}`,
+            name: `CC Mismatches - ${new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')}UTC`,
             reason: 'Thread for licensability mismatches found by the licensability command.',
         });
         thread.members.add(interaction.user.id);
