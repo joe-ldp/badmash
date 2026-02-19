@@ -31,6 +31,6 @@ module.exports = {
         const feedbackChannel = await interaction.client.channels.fetch(process.env.FEEDBACK_CHANNEL_ID);
         feedbackChannel.send({ embeds: [embed] });
 
-		return interaction.reply('Thank you for your feedback! It has been submitted to the bot owner(s).');
+		return interaction.reply({ content: 'Thank you for your feedback! It has been submitted to the bot owner(s).', ephemeral: true });
 	},
 };
