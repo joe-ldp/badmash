@@ -39,7 +39,7 @@ getCoverURL = (id) => {
 */
 fetchJSON = async (id) => {
     const response = await fetch(getAPIURL(id));
-    return await response.json();
+    return await response.json().catch(() => []);
 }
 
 /*
