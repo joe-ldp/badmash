@@ -30,6 +30,19 @@ module.exports = {
         });
         thread.members.add(interaction.user.id);
 
+        await thread.send(
+            `**Excluded**:
+- Rows with the label "EP", "Album", "Compilation", or "Double Single"
+- Mirai Sekai tracks (known intentional formatting differences)
+**Formatting tricks**:
+- "VIP Mix" on API replaced with "VIP"
+- "Muzzy" on API replaced with "MUZZ"
+- "Original" removed from API Version
+- "Cliché" on MCatalog replaced with "Cliche"
+- \`’ ' . ? - ( )\` ignored
+- " x " on API replaced with " & "
+- Case ignored`);
+
         try {
             for (const [rowNum, row] of rows.entries()) {
                 if (rowNum < 3) continue;
