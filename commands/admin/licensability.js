@@ -59,6 +59,7 @@ module.exports = {
                     if (!json.Tracks) throw "o no";
                     tracks = json.Tracks.map(t => ({
                         title: t.Title,
+                        version: t.Version,
                         creatorFriendly: t.CreatorFriendly
                     }));
                 } catch (err) {
@@ -71,10 +72,31 @@ module.exports = {
                     continue;
                 }
                 
-                let track = tracks.find(t => row.Track == t.title);
+                // let track = tracks.find(t => row.Track.toLowerCase().includes(t.title.toLowerCase()) && row.Track.toLowerCase().includes(t.version ? t.version.toLowerCase() : ''));
+                let matches = tracks.filter(t => {
+                    const mcatalogTrack = row.Track.replace(/’|'|\.|\?|\- |\(|\)/g, '').replace("Cliché", "Cliche").toLowerCase();
+                    const mcatTrack = t.title.replace(/’|'|\.|\?|\- |\(|\)/g, '').replace("Muzzy", "MUZZ").replace(" x ", " & ").toLowerCase();
+                    const titleMatch = 
+                        (row.Track.includes("VIP") || row.Track.includes("(") || t.title.includes("(") || t.version)
+                            ? mcatalogTrack.includes(mcatTrack) || mcatTrack.includes(mcatalogTrack)
+                            : mcatalogTrack.toLowerCase() == mcatTrack;
+                    const versionMatch = t.version ? mcatalogTrack.includes(t.version.replace(/’|'|\.|\- |\(|\)/g, '').replace("Muzzy", "MUZZ").replace(" x ", " & ").replace("VIP Mix", "VIP").replace("Original", "").toLowerCase()) : true;
+                    return titleMatch && versionMatch;
+                });
+
+                let track = matches.length == 1 ? matches[0] : (matches.sort((a, b) => (b.version?.length || 0) - (a.version?.length || 0))[0]);
 
                 let catalogCC = row.CC == 'Y';
-                if (track && (track.creatorFriendly != catalogCC)) {
+                if (track) {
+                    if (track.creatorFriendly != catalogCC) {
+                        mismatches++;
+                        const embed = new EmbedBuilder()
+                            .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
+                            .setDescription(`[MCatalog CC](${getMCatalogCellURL(row.ID, row.Track)}): ${catalogCC}, [MCat CC](${getPlayerURL(row.ID)}): ${track.creatorFriendly}`)
+                            .setColor(genreColour(row.Label));
+                        thread.send({ embeds: [embed] });
+                    }
+                } else {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
