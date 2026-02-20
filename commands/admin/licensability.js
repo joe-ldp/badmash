@@ -41,7 +41,7 @@ module.exports = {
                     lastPercent = percent;
                 }
 
-                if (["ep", "album", "compilation"].includes(row.Label.toLowerCase())) continue;
+                if (["ep", "album", "compilation", "double single"].includes(row.Label.toLowerCase())) continue;
                 
                 try {
                     let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID));
