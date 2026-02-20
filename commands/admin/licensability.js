@@ -55,28 +55,28 @@ module.exports = {
                     lastPercent = percent;
                 }
 
-                try {
-                    // Try to fetch from cache first, else fetch from API
-                    let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID));
-                    if (!json) {
-                        cacheMisses++;
-                        json = await fetchJSON(row.ID);
-                        // Cache releases with multiple tracks to minimise API calls
-                        if (json.Tracks.length > 1) {
-                            jsonCache = [json].concat(jsonCache);
-                            if (jsonCache.length > 50) jsonCache.pop();
-                        }
-                    } else {
-                        cacheHits++;
+                // Try to fetch from cache first, else fetch from API
+                let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID));
+                if (!json) {
+                    cacheMisses++;
+                    json = await fetchJSON(row.ID);
+                    // Cache releases with multiple tracks to minimise API calls
+                    if (json.Tracks.length > 1) {
+                        jsonCache = [json].concat(jsonCache);
+                        if (jsonCache.length > 50) jsonCache.pop();
                     }
-                    if (!json.Tracks) throw "o no";
+                } else {
+                    cacheHits++;
+                }
+
+                // If we got a json with "Tracks" (i.e. a valid release), save the attributes we need. Else, report a mismatch and move on to the next row.
+                if (json.Tracks) {
                     tracks = json.Tracks.map(t => ({
                         title: t.Title,
                         version: t.Version,
                         creatorFriendly: t.CreatorFriendly
                     }));
-                } catch (err) {
-                    // We're (hopefully) here because the API didn't return a JSON for this release, so notify the user
+                } else {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
