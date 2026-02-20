@@ -47,9 +47,9 @@ module.exports = {
                 if (row.Track.includes("Mirai Sekai")) continue; // Skip Mirai Sekai tracks due to known intentional formatting differences
                 if (["ep", "album", "compilation", "double single"].includes(row.Label.toLowerCase())) continue; // Skip album release rows as not applicable
 
-                if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) { // Update progress message every 1% (or on the last row)
+                if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) { // Update progress message every 1%
                     let funcTime = Date.now() - startTime;
-                    let timeLeft = percent == 100 ? 0 : (funcTime / rowNum) * (rows.length - rowNum) / 1000;
+                    let timeLeft = (funcTime / rowNum) * (rows.length - rowNum) / 1000;
                     // Edit the message manually instead of using interaction.editReply() to avoid 15 minute timeout
                     messageChannel.messages.edit(messageID, `Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
                     lastPercent = percent;
@@ -125,6 +125,7 @@ module.exports = {
 
         funcTime = Date.now() - startTime;
         // Edit the message manually instead of using interaction.editReply() to avoid 15 minute timeout
+        messageChannel.messages.edit(messageID, `Scanning for CC mismatches... 100% done (${rows.length} / ${rows.length}), ${mismatches} detected so far. Est. time remaining: 0:00`);
         (await messageChannel.messages.fetch(messageID)).reply(`Scan complete! Found ${mismatches} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
     },
 };
