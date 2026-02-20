@@ -59,17 +59,17 @@ module.exports = {
                 if (!json) {
                     cacheMisses++;
                     json = await fetchJSON(row.ID);
-                    // Cache releases with multiple tracks to minimise API calls
-                    if (json.Tracks.length > 1) {
-                        jsonCache = [json].concat(jsonCache);
-                        if (jsonCache.length > 50) jsonCache.pop();
-                    }
                 } else {
                     cacheHits++;
                 }
 
                 // If we got a json with "Tracks" (i.e. a valid release), save the attributes we need. Else, report a mismatch and move on to the next row.
                 if (json.Tracks) {
+                    // Cache releases with multiple tracks to minimise API calls
+                    if (json.Tracks.length > 1) {
+                        jsonCache = [json].concat(jsonCache);
+                        if (jsonCache.length > 50) jsonCache.pop();
+                    }
                     tracks = json.Tracks.map(t => ({
                         title: t.Title,
                         version: t.Version,
