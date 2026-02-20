@@ -19,7 +19,7 @@ module.exports = {
         
         let sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
 
-        let tracks = [], jsonCache = [], cacheHits = 0, cacheMisses = 0, percent = 0, lastPercent = 0, mismatches = 0;
+        let tracks = [], jsonCache = [], percent = 0, lastPercent = 0, mismatches = 0;
         const messageChannel = await interaction.client.channels.fetch(interaction.channelId);
         const messageID = sentMessage.id;
 
@@ -55,13 +55,7 @@ module.exports = {
                 }
 
                 // Try to fetch from cache first, else fetch from API
-                let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID));
-                if (!json) {
-                    cacheMisses++;
-                    json = await fetchJSON(row.ID);
-                } else {
-                    cacheHits++;
-                }
+                let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID)) ?? await fetchJSON(row.ID);
 
                 // If we got a json with "Tracks" (i.e. a valid release), save the attributes we need. Else, report a mismatch and move on to the next row.
                 if (json.Tracks) {
@@ -126,6 +120,5 @@ module.exports = {
 
         funcTime = Date.now() - startTime;
         (await messageChannel.messages.fetch(messageID)).reply(`Scan complete! Found ${mismatches} mismatches in ${timeFormat(funcTime / 1000)}. Check ${thread} for details.`);
-        console.log(`${cacheHits} cache hits, ${cacheMisses} cache misses.`);
     },
 };
