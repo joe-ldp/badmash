@@ -19,8 +19,7 @@ module.exports = {
         
         let sentMessage = await interaction.reply({ content: `Scanning for CC mismatches... 0% done (0 / ${rows.length}), 0 detected so far. Est. time remaining: bruh idfk yet chill`, fetchReply: true });
 
-        let jsonCache = [], cacheHits = 0, cacheMisses = 0;
-        let tracks, percent = 0, lastPercent = 0, mismatches = 0;
+        let tracks = [], jsonCache = [], cacheHits = 0, cacheMisses = 0, percent = 0, lastPercent = 0, mismatches = 0;
         const messageChannel = await interaction.client.channels.fetch(interaction.channelId);
         const messageID = sentMessage.id;
 
@@ -45,23 +44,24 @@ module.exports = {
 
         try {
             for (const [rowNum, row] of rows.entries()) {
-                if (rowNum < 3) continue;
-                if (row.Track.includes("Mirai Sekai")) continue;
-                if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) {
+                if (rowNum < 3) continue; // Skip header rows
+                if (row.Track.includes("Mirai Sekai")) continue; // Skip Mirai Sekai tracks due to known intentional formatting differences
+                if (["ep", "album", "compilation", "double single"].includes(row.Label.toLowerCase())) continue; // Skip album release rows as not applicable
+
+                if ((percent = Math.round((rowNum / rows.length) * 100)) > lastPercent) { // Update progress message every 1% (or on the last row)
                     let funcTime = Date.now() - startTime;
-                    let timeLeft = (funcTime / rowNum) * (rows.length - rowNum) / 1000;
-                    if (percent == 100) timeLeft = 0;
+                    let timeLeft = percent == 100 ? 0 : (funcTime / rowNum) * (rows.length - rowNum) / 1000;
                     messageChannel.messages.edit(messageID, `Scanning for CC mismatches... ${percent}% done (${rowNum} / ${rows.length}), ${mismatches} detected so far. Est. time remaining: ${timeFormat(timeLeft)}`);
                     lastPercent = percent;
                 }
 
-                if (["ep", "album", "compilation", "double single"].includes(row.Label.toLowerCase())) continue;
-                
                 try {
+                    // Try to fetch from cache first, else fetch from API
                     let json = jsonCache.find(j => j.Release.CatalogId == getReleaseID(row.ID));
                     if (!json) {
                         cacheMisses++;
                         json = await fetchJSON(row.ID);
+                        // Cache releases with multiple tracks to minimise API calls
                         if (json.Tracks.length > 1) {
                             jsonCache = [json].concat(jsonCache);
                             if (jsonCache.length > 50) jsonCache.pop();
@@ -76,6 +76,7 @@ module.exports = {
                         creatorFriendly: t.CreatorFriendly
                     }));
                 } catch (err) {
+                    // We're (hopefully) here because the API didn't return a JSON for this release, so notify the user
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
@@ -85,6 +86,7 @@ module.exports = {
                     continue;
                 }
                 
+                // Filter instead of find in case there are multiple tracks with the same title (e.g. a VIP and Original), then try to pick the correct one based on version name length (e.g. "X VIP" > "X")
                 let matches = tracks.filter(t => {
                     const mcatalogTrack = row.Track.replace(/’|'|\.|\?|\- |\(|\)/g, '').replace("Cliché", "Cliche").toLowerCase();
                     const mcatTrack = t.title.replace(/’|'|\.|\?|\- |\(|\)/g, '').replace("Muzzy", "MUZZ").replace(" x ", " & ").toLowerCase();
@@ -95,11 +97,11 @@ module.exports = {
                     const versionMatch = t.version ? mcatalogTrack.includes(t.version.replace(/’|'|\.|\- |\(|\)/g, '').replace("Muzzy", "MUZZ").replace(" x ", " & ").replace("VIP Mix", "VIP").replace("Original", "").toLowerCase()) : true;
                     return titleMatch && versionMatch;
                 });
-
                 let track = matches.length == 1 ? matches[0] : (matches.sort((a, b) => (b.version?.length || 0) - (a.version?.length || 0))[0]);
-
-                let catalogCC = row.CC == 'Y';
+                
                 if (track) {
+                    // If the track is found, compare the creator-friendly-ness and report if there's a mismatch    
+                    let catalogCC = row.CC == 'Y';
                     if (track.creatorFriendly != catalogCC) {
                         mismatches++;
                         const embed = new EmbedBuilder()
@@ -109,6 +111,7 @@ module.exports = {
                         thread.send({ embeds: [embed] });
                     }
                 } else {
+                    // If the track isn't found, report a mismatch and provide URLs for investigation
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
