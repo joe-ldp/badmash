@@ -44,7 +44,12 @@ getRows = () => {
     return this.rows;
 }
 
+getMCatalogCellURL = (id, track) => {
+    return `https://docs.google.com/spreadsheets/d/${process.env.SHEET_KEY}/edit#gid=${this.sheet.sheetId}&range=C${getRows().findIndex(r => r.ID == id && r.Track == track) + 2}`;
+}
+
 module.exports = {
     initSheet,
-    getRows
+    getRows,
+    getMCatalogCellURL
 }

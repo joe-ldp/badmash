@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { getRows } = require.main.require('./resources/modules/sheet.js');
+const { getRows, getMCatalogCellURL } = require.main.require('./resources/modules/sheet.js');
 const { timeFormat } = require.main.require('./resources/modules/util.js');
 const { genreColour } = require.main.require('./resources/modules/colour.js');
-const { fetchJSON, getReleaseID } = require.main.require('./resources/modules/monstercat.js');
+const { fetchJSON, getReleaseID, getPlayerURL, getAPIURL } = require.main.require('./resources/modules/monstercat.js');
 
 module.exports = {
     ownerOnly: true,
@@ -64,7 +64,7 @@ module.exports = {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
-                        .setDescription(`Failed to fetch release data from Monstercat API. Either it's not on the API (https://www.monstercat.com/api/catalog/release/<ID>) or the ID is wrong on MCatalog.`)
+                        .setDescription(`Failed to fetch release data from [Monstercat API](${getAPIURL(row.ID)}). Either it's not on the API, or the ID is wrong on the API or MCatalog.`)
                         .setColor(genreColour(row.Label));
                     thread.send({ embeds: [embed] });
                     continue;
@@ -77,7 +77,7 @@ module.exports = {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
-                        .setDescription(`MCatalog CC: ${catalogCC}, MCat CC: ${track.creatorFriendly}`)
+                        .setDescription(`Couldn't find this track in [the release returned from the API](${getAPIURL(row.ID)}). Tracks for this release:\n\n${tracks.map(t => `${t.title} ${t.version ? t.version : ''}`).join('\n')}`)
                         .setColor(genreColour(row.Label));
                     thread.send({ embeds: [embed] });
                 }

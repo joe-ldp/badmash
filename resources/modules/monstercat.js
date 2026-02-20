@@ -38,8 +38,7 @@ getCoverURL = (id) => {
 * @returns {object} - The API JSON
 */
 fetchJSON = async (id) => {
-    const url = `https://www.monstercat.com/api/catalog/release/${getReleaseID(id)}`;
-    const response = await fetch(url);
+    const response = await fetch(getAPIURL(id));
     return await response.json();
 }
 
@@ -120,6 +119,14 @@ getTrackNumber = (json, trackName) => {
     return track.TrackNumber;
 }
 
+getPlayerURL = (id) => {
+    return `https://player.monstercat.app/release/${getReleaseID(id)}`;
+}
+
+getAPIURL = (id) => {
+    return `https://www.monstercat.com/api/catalog/release/${getReleaseID(id)}`;
+}
+
 module.exports = {
     getReleaseID,
     getReleaseURL,
@@ -130,4 +137,6 @@ module.exports = {
     getBrand,
     getGRid,
     getTrackNumber,
+    getAPIURL,
+    getPlayerURL
 }
