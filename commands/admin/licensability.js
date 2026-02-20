@@ -28,8 +28,7 @@ module.exports = {
             reason: 'Thread for licensability mismatches found by the licensability command.',
         });
         thread.members.add(interaction.user.id);
-
-        await thread.send(
+        thread.send(
             `**Excluded**:
 - Rows with the label "EP", "Album", "Compilation", or "Double Single"
 - Mirai Sekai tracks (known intentional formatting differences)
