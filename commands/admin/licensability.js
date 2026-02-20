@@ -74,7 +74,7 @@ module.exports = {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
-                        .setDescription(`Failed to fetch release data from [Monstercat API](${getAPIURL(row.ID)}). Either it's not on the API, or the ID is wrong on the API or MCatalog.`)
+                        .setDescription(`Failed to fetch release data from [Monstercat API](${getAPIURL(row.ID)}). Either it's not on the API, or the ID is wrong on the API or [MCatalog](${getMCatalogCellURL(row.ID, row.Track, "A")}).`)
                         .setColor(genreColour(row.Label));
                     thread.send({ embeds: [embed] });
                     continue;
@@ -100,7 +100,7 @@ module.exports = {
                         mismatches++;
                         const embed = new EmbedBuilder()
                             .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
-                            .setDescription(`[MCatalog CC](${getMCatalogCellURL(row.ID, row.Track)}): ${catalogCC}, [MCat CC](${getPlayerURL(row.ID)}): ${track.creatorFriendly}`)
+                            .setDescription(`[MCatalog CC](${getMCatalogCellURL(row.ID, row.Track, "C")}): ${catalogCC}, [MCat CC](${getPlayerURL(row.ID)}): ${track.creatorFriendly}`)
                             .setColor(genreColour(row.Label));
                         thread.send({ embeds: [embed] });
                     }
@@ -109,7 +109,7 @@ module.exports = {
                     mismatches++;
                     const embed = new EmbedBuilder()
                         .setTitle(`[${row.ID}] ${row.Artists} - ${row.Track}`)
-                        .setDescription(`Couldn't find this track in [the release returned from the API](${getAPIURL(row.ID)}). Tracks for this release:\n\n${tracks.map(t => `${t.title} ${t.version ? t.version : ''}`).join('\n')}`)
+                        .setDescription(`Couldn't find this track in [the release returned from the API](${getAPIURL(row.ID)}). Tracks for this release:\n\n${tracks.map(t => `${t.title} ${t.version ? `(${t.version})` : ''}`).join('\n')}`)
                         .setColor(genreColour(row.Label));
                     thread.send({ embeds: [embed] });
                 }
@@ -117,6 +117,10 @@ module.exports = {
         }
         catch (err) {
             console.error(err);
+        }
+
+        if (mismatches == 0) {
+            thread.send({content: `Would you look at that! No mismatches found!`, files: [{attachment: 'https://tenor.com/view/yes-yes-sir-yayy-kataman-gif-12260883688244422951.gif'}]});
         }
 
         funcTime = Date.now() - startTime;
