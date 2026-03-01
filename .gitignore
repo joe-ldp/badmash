@@ -3,3 +3,4 @@ node_modules
 package-lock.json
 /resources/objects/genres.json
 /resources/objects/colours.json
+/resources/objects/mashups.json
