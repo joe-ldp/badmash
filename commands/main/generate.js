@@ -64,7 +64,7 @@ module.exports = {
             for (let i = 0; i < numTracks; i++) {
                 let first = tracks[0] ?? { 'BPM': '*', 'Key': '*' };
                 desiredKey = first.Key ?? desiredKey;
-                desiredBPM = desiredBPM ?? first.BPM;
+                desiredBPM = first.BPM ?? desiredBPM;
                 tracks.push(pickTrack(tracks, rows, desiredGenre, desiredBPM, desiredKey));
             }
 
