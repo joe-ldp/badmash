@@ -89,7 +89,7 @@ module.exports = {
             });
             
             const genres = tracks.map(t => t.Label);
-            const mashupGenre = (desiredGenre == '*' && genres.some(g => g !== genres[0]))
+            const mashupGenre = (desiredGenre == '*')
                 ? await generateGenreName(genres)
                 : tracks[0].Label;
             const colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(genres.map(g => genreColour(g)));
