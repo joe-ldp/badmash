@@ -46,7 +46,7 @@ search = (rows, args) => {
 	let matchCounter = [];
 	const mergedArgs = args.join(' '),
 		dupes = ['remix', 'remixes', 'remake', 'vip', 'classical', 'mix', 'acoustic', '+'],
-		reduceWeight = ['ep', 'album', 'compilation'];
+		reduceWeight = ['ep', 'album', 'compilation', 'double single'];
 
 	for (const [rowNum, row] of rows.entries()) {
 		let weight = 1,
