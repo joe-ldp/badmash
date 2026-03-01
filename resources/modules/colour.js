@@ -50,8 +50,8 @@ updateColours = async (client, sheet) => {
 
 blendColors = (colours) => {
     let rgbs = colours.map(hex => {
-        const [rA, gA, bA] = hex.match(/\w\w/g).map((c) => parseInt(c, 16));
-        return { r: rA, g: gA, b: bA };
+        const [r, g, b] = hex.match(/\w\w/g).map((c) => parseInt(c, 16));
+        return { r: r, g: g, b: b };
     });
 
     let avgR = Math.round(rgbs.reduce((sum, c) => sum + c.r, 0) / rgbs.length),
