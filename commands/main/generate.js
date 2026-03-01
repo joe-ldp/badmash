@@ -87,9 +87,12 @@ module.exports = {
                 
                 embed.addFields({ name: `${track.Artists} - ${track.Track}`, value: `Key: ${track.Key} (pitch ${keyDiff}), BPM: ${track.BPM}` });
             });
-
-            let mashupGenre = desiredGenre != '*' ? desiredGenre : await generateGenreName(tracks.map(t => t.Label));
-            let colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(tracks.map(t => genreColour(t.Label)));
+            
+            const genres = tracks.map(t => t.Label);
+            const mashupGenre = (desiredGenre == '*' && genres.some(g => g !== genres[0]))
+                ? await generateGenreName(genres)
+                : tracks[0].Label;
+            const colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(genres);
 
             embed
                 .setTitle(await generateMashupTitle(tracks.map(t => t.Track)))
