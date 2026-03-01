@@ -92,7 +92,7 @@ module.exports = {
             const mashupGenre = (desiredGenre == '*' && genres.some(g => g !== genres[0]))
                 ? await generateGenreName(genres)
                 : tracks[0].Label;
-            const colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(genres);
+            const colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(genres.map(g => genreColour(g)));
 
             embed
                 .setTitle(await generateMashupTitle(tracks.map(t => t.Track)))
