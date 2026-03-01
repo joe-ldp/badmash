@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { generateMashupTitle, generateGenreName } = require.main.require('./resources/modules/llm.js');
 const { pickTrack } = require.main.require('./resources/modules/pickTrack.js');
 const { genreColour, blendColors } = require.main.require('./resources/modules/colour.js');
 const { getKeyID, getMinKey, getMajKey } = require.main.require('./resources/modules/key.js');
@@ -87,32 +88,12 @@ module.exports = {
                 embed.addFields({ name: `${track.Artists} - ${track.Track}`, value: `Key: ${track.Key} (pitch ${keyDiff}), BPM: ${track.BPM}` });
             });
 
-            // Initialize variables
-            let colour = genreColour(desiredGenre);
-
-            if (desiredGenre == '*') {
-                colour = genreColour(tracks[0].Label);
-                tracks.forEach(track => {
-                    colour = blendColors(colour, genreColour(track.Label));
-                });
-
-                // Randomly sort the array so we can get 2 random, but unique, genres
-                tracks.sort(function () { return Math.random - 0.5 });
-                const first = tracks[0].Label;
-                const second = tracks[1].Label;
-
-                // Pick a random prefix then add halves of the random genres
-                const prefixes = require.main.require('./resources/objects/genrePrefixes.json');
-                desiredGenre = prefixes[Math.floor(Math.random() * prefixes.length)] + first.slice(0, first.length / 2) + second.slice(second.length / 2);
-            }
-
-            // Capitalise first letter of each word in desiredGenre
-            desiredGenre = desiredGenre.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-            const user = interaction.user.username.charAt(0).toUpperCase() + interaction.user.username.slice(1);
+            let mashupGenre = desiredGenre != '*' ? desiredGenre : await generateGenreName(tracks.map(t => t.Label));
+            let colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(tracks.map(t => genreColour(t.Label)));
 
             embed
-                .setTitle(`${user}'s ${desiredGenre} mashup in ${avgKey}`)
-                .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKeyID)})\nSuggested BPM: ${avgBPM}\nGenre: ${desiredGenre}`)
+                .setTitle(await generateMashupTitle(tracks.map(t => t.Track)))
+                .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKeyID)})\nSuggested BPM: ${avgBPM}\nGenre: ${mashupGenre}`)
                 .setColor(colour);
         } catch (err) {
             throw(err);

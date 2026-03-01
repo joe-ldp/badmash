@@ -48,15 +48,17 @@ updateColours = async (client, sheet) => {
     });
 }
 
-blendColors = (colorA, colorB, amount = 0.5) => {
-    const [rA, gA, bA] = colorA.match(/\w\w/g).map((c) => parseInt(c, 16));
-    const [rB, gB, bB] = colorB.match(/\w\w/g).map((c) => parseInt(c, 16));
+blendColors = (colours) => {
+    let rgbs = colours.map(hex => {
+        const [rA, gA, bA] = hex.match(/\w\w/g).map((c) => parseInt(c, 16));
+        return { r: rA, g: gA, b: bA };
+    });
 
-    const r = Math.round(rA + (rB - rA) * amount).toString(16).padStart(2, '0');
-    const g = Math.round(gA + (gB - gA) * amount).toString(16).padStart(2, '0');
-    const b = Math.round(bA + (bB - bA) * amount).toString(16).padStart(2, '0');
+    let avgR = Math.round(rgbs.reduce((sum, c) => sum + c.r, 0) / rgbs.length),
+        avgG = Math.round(rgbs.reduce((sum, c) => sum + c.g, 0) / rgbs.length),
+        avgB = Math.round(rgbs.reduce((sum, c) => sum + c.b, 0) / rgbs.length);
 
-    return '#' + r + g + b;
+    return processColour({ red: avgR / 255, green: avgG / 255, blue: avgB / 255 }); 
 }
 
 /*
