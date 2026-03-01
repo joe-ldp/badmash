@@ -1,5 +1,54 @@
 const { getKeyID } = require.main.require('./resources/modules/key.js');
 
+searchTrack = (rows, searchArg) => {
+	searchArg = searchArg.toLowerCase().trim();
+    let matchCounter = [];
+    const dupes = ['remix', 'remixes', 'remake', 'vip', 'classical', 'mix', 'acoustic', '+'];
+    const reduceWeight = ['ep', 'album', 'compilation', 'double single'];
+
+    for (const [rowNum, row] of rows.entries()) {
+        let weight = 1,
+            rowMatches = 0;
+
+        const searchFields = [
+                row.ID, row.Date, row.Label, row.Artists, row.Track, row.Comp, row.Length, row.BPM, row.Key
+            ].filter(v => v !== undefined).map(v => v.toLowerCase()),
+            searchFieldsJoined = searchFields.join(' ');
+
+        if (dupes.some((dupe) => row.Track.includes(dupe) && !searchArg.includes(dupe))) continue;
+
+        // EPs, albums, and compilations have a lower weight
+        if (reduceWeight.includes(row.Label.toLowerCase())) weight = 0.5;
+
+        searchArg.split(/ +/g).forEach(arg => {
+            if (searchFieldsJoined.includes(arg)) {
+                dupes.forEach(dupe => {
+                    if (searchFields.includes(dupe) && !searchArg.includes(dupe)) return;
+                    rowMatches += weight;
+                });
+            }
+        });
+
+        if (rowMatches) {
+            matchCounter.push({
+                row: rowNum,
+                matches: rowMatches
+            });
+        }
+    }
+
+    if (matchCounter.length) {
+        let index = 0;
+        for (let i = 0; i < matchCounter.length; i++) {
+            if (matchCounter[i].matches > matchCounter[index].matches) index = i;
+        }
+
+        return rows[matchCounter[index].row];
+    }
+    // Sad violin music
+    else throw 'no_match';
+}
+
 pickTrack = (tracks, rows, desiredGenre = '*', desiredBPM = '*', desiredKey = '*') => {
     let track;
     do {
@@ -46,4 +95,5 @@ validBPM = (bpm, desiredBPM) => {
 
 module.exports = {
     pickTrack,
+    searchTrack,
 }
