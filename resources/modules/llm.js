@@ -11,7 +11,7 @@ askAI = async (prompt) => {
 }
 
 generateMashupTitle = async (tracks) => {
-  return await askAI(`Suggest a title for a mashup of the following tracks: ${tracks.join(', ')}. Try to use words from the track names. Try to avoid adding any random words (other than conjunctions), but if it creates an interesting sounding name, that's fine. Respond with just the title, no explanation.`);
+  return await askAI(`Suggest a title for a mashup of the following tracks: ${tracks.map(t => t.Track).join(', ')}. Try to use words from the track names. Try to avoid adding any random words (other than conjunctions), but if it creates an interesting sounding name, that's fine. Respond with just the title, no explanation.`);
 }
 
 generateGenreName = async (genres) => {
