@@ -124,12 +124,12 @@ mashupList = (interaction) => {
     }
 }
 
-mashupEdit = (interaction) => {
+mashupEdit = (interaction, mashupID) => {
     
 }
 
-mashupDelete = (interaction) => {
-    mashup = Mashup.load(interaction.options.getString('id'));
+mashupDelete = async (interaction, mashupID) => {
+    mashup = Mashup.load(mashupID);
     if (mashup && mashup.creator === interaction.user.username) {
         fs.readFile(mashupsJson, 'utf8', (err, data) => {
             if (err) throw err;
@@ -147,8 +147,8 @@ mashupDelete = (interaction) => {
     }
 }
 
-mashupView = async (interaction) => {
-    mashup = Mashup.load(interaction.options.getString('id'));
+mashupView = async (interaction, mashupID) => {
+    mashup = Mashup.load(mashupID);
     if (mashup && mashup.creator === interaction.user.username) {
         return interaction.editReply(await mashup.getEmbed());
     } else {
