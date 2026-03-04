@@ -98,7 +98,7 @@ mashupNew = async (interaction, tracks) => {
         time: 60000 * 15,
     });
     deleteCollector.on('collect', async m => {
-        let mash = 1;
+        return await mashupDelete(m, m.customId.split('delete_mashup_')[1]);
     });
 }
 
