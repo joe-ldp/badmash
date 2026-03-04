@@ -75,6 +75,31 @@ mashupNew = async (interaction, tracks) => {
     }
     mash = new Mashup(`${interaction.user.id}-${Date.now()}`, tracks, interaction.user.username, Date.now(), Date.now());
     await interaction.editReply(await mash.getEmbed());
+
+    const suggestedTrackCollector = interaction.channel.createMessageComponentCollector({
+        time: 60000 * 15,
+    });
+    suggestedTrackCollector.on('collect', async m => {
+        let mash = Mashup.load(m.customId.split('add_suggested_')[1]);
+        if (mash && mash.suggestedTrack) {
+            mash.addTrack(mash.suggestedTrack);
+            await m.update(await mash.getEmbed());
+        } else {
+            await m.update({ content: 'No suggested track available to add.', components: [] });
+        }
+    });
+    const editCollector = interaction.channel.createMessageComponentCollector({
+        time: 60000 * 15,
+    });
+    editCollector.on('collect', async m => {
+        let mash = 1;
+    });
+    const deleteCollector = interaction.channel.createMessageComponentCollector({
+        time: 60000 * 15,
+    });
+    deleteCollector.on('collect', async m => {
+        let mash = 1;
+    });
 }
 
 mashupList = (interaction) => {
