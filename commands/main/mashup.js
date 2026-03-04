@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ComponentType } = require('discord.js');
 const { Mashup } = require.main.require('./resources/modules/mashup.js');
 const { searchTrack } = require.main.require('./resources/modules/pickTrack.js');
 const { getRows } = require.main.require('./resources/modules/sheet.js');
@@ -77,6 +77,8 @@ mashupNew = async (interaction, tracks) => {
     await interaction.editReply(await mash.getEmbed());
 
     const suggestedTrackCollector = interaction.channel.createMessageComponentCollector({
+        filter: i => i.customId.startsWith('add_suggested_') && i.user.id === interaction.user.id,
+        componentType: ComponentType.Button,
         time: 60000 * 15,
     });
     suggestedTrackCollector.on('collect', async m => {
@@ -89,6 +91,8 @@ mashupNew = async (interaction, tracks) => {
         }
     });
     const editCollector = interaction.channel.createMessageComponentCollector({
+        filter: i => i.customId.startsWith('edit_mashup_') && i.user.id === interaction.user.id,
+        componentType: ComponentType.Button,
         time: 60000 * 15,
     });
     editCollector.on('collect', async m => {
@@ -98,6 +102,8 @@ mashupNew = async (interaction, tracks) => {
         }
     });
     const deleteCollector = interaction.channel.createMessageComponentCollector({
+        filter: i => i.customId.startsWith('delete_mashup_') && i.user.id === interaction.user.id,
+        componentType: ComponentType.Button,
         time: 60000 * 15,
     });
     deleteCollector.on('collect', async m => {
