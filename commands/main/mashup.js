@@ -92,7 +92,10 @@ mashupNew = async (interaction, tracks) => {
         time: 60000 * 15,
     });
     editCollector.on('collect', async m => {
-        let mash = 1;
+        let mash = Mashup.load(m.customId.split('edit_mashup_')[1]);
+        if (mash) {
+            return await mashupEdit(m);
+        }
     });
     const deleteCollector = interaction.channel.createMessageComponentCollector({
         time: 60000 * 15,
