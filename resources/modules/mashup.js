@@ -21,7 +21,11 @@ class Mashup {
         const mashups = JSON.parse(data);
         const existing = mashups.find(m => m.id === id);
         if (existing) {
-            return new Mashup(existing.id, existing.tracks, existing.creator, existing.createdAt, existing.updatedAt);
+            let mashup = new Mashup(existing.id, existing.tracks, existing.creator, existing.createdAt, existing.updatedAt);
+            mashup.genre = existing.genre;
+            mashup.title = existing.title;
+            mashup.suggestedTrack = existing.suggestedTrack;
+            return mashup;
         } else {
             return null; // or throw an error idk
         }
