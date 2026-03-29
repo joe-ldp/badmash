@@ -9,7 +9,12 @@ class Mashup {
     constructor(id, tracks, creator, createdAt, updatedAt) {
         this.id = id;
         this.tracks = [];
-        tracks.forEach(t => this.addTrack(t));
+        if (tracks && tracks.length > 0) {
+            tracks.forEach(t => this.addTrack(t));
+        } else {
+            this.addTrack(this.suggestTrack());
+            this.addTrack(this.suggestTrack());
+        }
         this.creator = creator;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
