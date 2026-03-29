@@ -91,6 +91,19 @@ class Mashup {
         return this.tracks;
     }
 
+    getMashBPM() {
+        if (this.tracks.length == 0) return '*';
+        if (this.tracks.length == 1) return this.tracks[0].BPM;
+        return Math.round(this.tracks.reduce((tot, track) => tot + parseInt(track.BPM), 0) / this.tracks.length);
+    }
+    
+    getMashKey() {
+        if (this.tracks.length == 0) return '*';
+        if (this.tracks.length == 1) return this.tracks[0].Key;
+        const averageKeyID = Math.floor(this.tracks.reduce((tot, track) => tot + getKeyID(track.Key), 0) / this.tracks.length);
+        return getMinKey(averageKeyID);
+    }
+
     async getEmbed() {
         const embed = new EmbedBuilder()
             .setTitle(`${this.creator} - ${await generateMashupTitle(this.tracks)}`)
@@ -98,15 +111,14 @@ class Mashup {
         });
         let actionRow = new ActionRowBuilder();
 
-        const averageBPM = Math.round(this.tracks.reduce((tot, track) => tot + parseInt(track.BPM), 0) / this.tracks.length);
-        const averageKeyID = Math.floor(this.tracks.reduce((tot, track) => tot + getKeyID(track.Key), 0) / this.tracks.length);
-        const averageKey = getMinKey(averageKeyID);
+        const bpm = this.getMashBPM();
+        const key = this.getMashKey();
 
         this.tracks.forEach(track => {
-            let pitchDiff = getKeyID(averageKey) - getKeyID(track.Key);
+            let pitchDiff = getKeyID(key) - getKeyID(track.Key);
             embed.addFields({ name: `${track.Artists} - ${track.Track}`, value: `Key: ${track.Key} (pitch ${pitchDiff >= 0 ? '+' : ''}${pitchDiff}), BPM: ${track.BPM}` });
         });
-        embed.setDescription(`Last edited on ${new Date(this.updatedAt).toLocaleDateString()}\nGenre: ${await generateGenreName(this.tracks.map(t => t.Label))}\nSuggested Key: ${averageKey}\nSuggested BPM: ${averageBPM}`);
+        embed.setDescription(`Last edited on ${new Date(this.updatedAt).toLocaleDateString()}\nGenre: ${this.genre}\nSuggested Key: ${key}\nSuggested BPM: ${bpm}`);
 
         if (this.suggestedTrack) {
             embed.addFields({ name: 'Suggested track', value: `${this.suggestedTrack.Artists} - ${this.suggestedTrack.Track} (${this.suggestedTrack.Key}, ${this.suggestedTrack.BPM}bpm)` });
