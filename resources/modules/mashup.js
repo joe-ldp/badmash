@@ -106,7 +106,7 @@ class Mashup {
 
     async getEmbed() {
         const embed = new EmbedBuilder()
-            .setTitle(`${this.creator} - ${await generateMashupTitle(this.tracks)}`)
+            .setTitle(`${this.creator} - ${this.title}`)
             .setFooter({ text: `Last updated on ${new Date(this.updatedAt).toLocaleDateString()}`
         });
         let actionRow = new ActionRowBuilder();
