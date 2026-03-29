@@ -142,7 +142,7 @@ class Mashup {
     }
 
     suggestTrack() {
-        return pickTrack(this.tracks, getRows());
+        return pickTrack(this.tracks, getRows(), "*", this.getMashBPM(), this.getMashKey());
     }
 }
 
