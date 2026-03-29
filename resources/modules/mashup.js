@@ -38,27 +38,21 @@ class Mashup {
 
     async save() {
         this.updatedAt = Date.now();
-        fs.readFile(mashupsJson, 'utf8', (err, data) => {
-            if (err) throw err;
-            if (data) {
-                const mashups = JSON.parse(data);
-                const existingIndex = mashups.findIndex(m => m.id === this.id);
-            if (existingIndex !== -1) {
-                mashups[existingIndex] = this;
+        try {
+            const data = await fs.promises.readFile(mashupsJson, 'utf8');
+            let mashups = data ? JSON.parse(data) : [];
+
+            const index = mashups.findIndex(m => m.id === this.id);
+            if (index !== -1) {
+                mashups[index] = this;
             } else {
                 mashups.push(this);
             }
-            fs.writeFile(mashupsJson, JSON.stringify(mashups, null, 2), (err) => {
-                if (err) throw err;
-                console.log(`Mashup saved to ${mashupsJson}`);
-            });
-            } else {
-                fs.writeFile(mashupsJson, JSON.stringify([this], null, 2), (err) => {
-                    if (err) throw err;
-                    console.log(`Mashup saved to new ${mashupsJson}`);
-                });
-            }
-        });
+
+            await fs.promises.writeFile(mashupsJson, JSON.stringify(mashups, null, 2));
+        } catch (err) {
+            console.error("Failed to save mashup:", err);
+        }
     }
 
     deSpreadsheetifyRow(row) {
@@ -101,7 +95,7 @@ class Mashup {
         if (this.tracks.length == 1) return this.tracks[0].BPM;
         return Math.round(this.tracks.reduce((tot, track) => tot + parseInt(track.BPM), 0) / this.tracks.length);
     }
-    
+
     getMashKey() {
         if (this.tracks.length == 0) return '*';
         if (this.tracks.length == 1) return this.tracks[0].Key;
@@ -112,8 +106,9 @@ class Mashup {
     async getEmbed() {
         const embed = new EmbedBuilder()
             .setTitle(`${this.creator} - ${this.title}`)
-            .setFooter({ text: `Last updated on ${new Date(this.updatedAt).toLocaleDateString()}`
-        });
+            .setFooter({
+                text: `Last updated on ${new Date(this.updatedAt).toLocaleDateString()}`
+            });
         let actionRow = new ActionRowBuilder();
 
         const bpm = this.getMashBPM();
