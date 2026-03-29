@@ -72,11 +72,13 @@ class Mashup {
         };
     }
 
-    addTrack(track) {
+    async addTrack(track) {
         const cleanTrack = this.deSpreadsheetifyRow(track);
         if (this.tracks.some(t => t === cleanTrack)) return;
         this.tracks.push(cleanTrack);
         this.suggestedTrack = this.deSpreadsheetifyRow(this.suggestTrack());
+        this.title = await generateMashupTitle(this.tracks);
+        this.genre = await generateGenreName(this.tracks.map(t => t.Label));
         this.save();
     }
 
