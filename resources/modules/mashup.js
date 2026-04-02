@@ -76,7 +76,11 @@ class Mashup {
         if (this.tracks.some(t => t === cleanTrack)) return;
         this.tracks.push(cleanTrack);
         this.suggestedTrack = this.deSpreadsheetifyRow(this.suggestTrack());
-        this.title = await generateMashupTitle(this.tracks);
+        if (useAI) {
+            this.title = await generateMashupTitleAI(this.tracks);
+        } else { 
+            this.title = await generateMashupTitleManual(this.genre, this.creator, this.getMashKey());
+        }
         this.genre = await generateGenreName(this.tracks.map(t => t.Label));
         this.save();
     }

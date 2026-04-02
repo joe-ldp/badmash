@@ -95,7 +95,7 @@ module.exports = {
             const colour = desiredGenre != '*' ? genreColour(desiredGenre) : blendColors(genres.map(g => genreColour(g)));
 
             embed
-                .setTitle(await generateMashupTitle(tracks))
+                .setTitle(await generateMashupTitleManual(mashupGenre, interaction.user.username, avgKey))
                 .setDescription(`Suggested key: ${avgKey} (${getMajKey(avgKeyID)})\nSuggested BPM: ${avgBPM}\nGenre: ${mashupGenre}`)
                 .setColor(colour);
         } catch (err) {
