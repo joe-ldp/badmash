@@ -28,6 +28,8 @@ generateMashupTitleAI = async (tracks) => {
 generateGenreNameAI = async (genres) => {
   if (genres.some(g => g !== genres[0]))
     return await askAI(`Suggest a name for a genre that combines the following genres: ${genres.join(', ')}. Try to use words from the genre names. Respond with just the name, no explanation.`);
+  else
+    return genres[0];
 }
 
 generateMashupTitleManual = (genre, user, key) => {
